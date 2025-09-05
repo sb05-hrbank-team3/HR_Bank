@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: hrbank
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hrbank
+    username: hrbank_user
+    password: hrbank_1234
+    driver-class-name: org.postgresql.Driver
+  # JPA
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      # create, create-drop, update, validate, none
+#    show-sql: false
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        physical_naming_strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+        jdbc.time_zone: UTC
+    open-in-view: false
+
+logging:  # logging 처리
+  level:
+    org.springframework: INFO
+    org.hibernate.SQL: WARN
