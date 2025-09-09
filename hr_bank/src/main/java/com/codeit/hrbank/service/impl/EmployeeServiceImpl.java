@@ -1,6 +1,6 @@
 package com.codeit.hrbank.service.impl;
 
-import com.codeit.hrbank.dto.data.CursorPageResponse;
+import com.codeit.hrbank.dto.response.CursorPageResponse;
 import com.codeit.hrbank.dto.data.EmployeeDTO;
 import com.codeit.hrbank.dto.request.EmployeeCreateRequest;
 import com.codeit.hrbank.dto.request.EmployeeUpdateRequest;
@@ -76,6 +76,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
+  @Transactional
   public EmployeeDTO updateEmployee(Long employeeId, EmployeeUpdateRequest request,
       MultipartFile profile) {
     Department department = departmentRepository.findById(request.departmentId()).orElseThrow(
@@ -99,6 +100,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
+  @Transactional
   public void deleteEmployee(Long employeeId) {
     if (!employeeRepository.existsById(employeeId)) {
       throw new NoSuchElementException("회원이 존재하지 않습니다.");

@@ -1,6 +1,6 @@
 package com.codeit.hrbank.controller;
 
-import com.codeit.hrbank.dto.data.CursorPageResponse;
+import com.codeit.hrbank.dto.response.CursorPageResponse;
 import com.codeit.hrbank.dto.data.EmployeeDTO;
 import com.codeit.hrbank.dto.request.EmployeeCreateRequest;
 import com.codeit.hrbank.dto.request.EmployeeUpdateRequest;
