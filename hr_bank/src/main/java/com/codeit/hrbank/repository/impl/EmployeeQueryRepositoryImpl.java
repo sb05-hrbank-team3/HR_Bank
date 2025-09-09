@@ -28,7 +28,7 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
       String position,
       Instant hireDateFrom,
       Instant hireDateTo,
-      String status,
+      EmployeeStatus status,
       Pageable pageable) {
 
     var query = queryFactory
@@ -67,8 +67,8 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
       query.where(e.hireDate.loe(hireDateTo));
     }
 
-    if (status != null && !status.isEmpty()) {
-      query.where(e.status.eq(EmployeeStatus.valueOf(status)));
+    if (status != null) {
+      query.where(e.status.eq(status));
     }
 
     // 페이징 적용

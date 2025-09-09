@@ -62,6 +62,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         .status(EmployeeStatus.ACTIVE)
         // 메모는 어따가 넣어?
         .build();
+
     // profile 삽입하는것 사용해야함.
     Employee save = employeeRepository.save(employee);
 
@@ -82,7 +83,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         .hireDate(request.hireDate())
         // 메모는 어따가 넣어?
         .build();
-
+    // profile 삽입하는것 사용해야함.
     Employee save = employeeRepository.save(updateEmployee);
     return employeeMapper.toDTO(save);
   }
@@ -95,6 +96,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     employeeRepository.deleteById(employeeId);
   }
+
   @Override
   public CursorPageResponse<EmployeeDTO> findAllByPart(
       String nameOrEmail,
@@ -103,12 +105,13 @@ public class EmployeeServiceImpl implements EmployeeService {
       String position,
       Instant hireDateFrom,
       Instant hireDateTo,
-      String status,
+      EmployeeStatus status,
       Pageable pageable) {
 
     // 1. 데이터 조회 (필드별 파라미터 전달)
     List<EmployeeDTO> employees = employeeRepository.findAllQEmployeesPart(
-        nameOrEmail, employeeNumber, departmentName, position, hireDateFrom, hireDateTo, status, pageable);
+        nameOrEmail, employeeNumber, departmentName, position, hireDateFrom, hireDateTo, status,
+        pageable);
 
     // 2. 다음 페이지 커서 계산
     Long nextCursor = null;

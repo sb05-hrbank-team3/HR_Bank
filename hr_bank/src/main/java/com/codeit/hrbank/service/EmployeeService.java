@@ -4,6 +4,7 @@ import com.codeit.hrbank.dto.data.CursorPageResponse;
 import com.codeit.hrbank.dto.data.EmployeeDTO;
 import com.codeit.hrbank.dto.request.EmployeeCreateRequest;
 import com.codeit.hrbank.dto.request.EmployeeUpdateRequest;
+import com.codeit.hrbank.entity.EmployeeStatus;
 import java.time.Instant;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +25,7 @@ public interface EmployeeService {
         String position,
         Instant hireDateFrom,
         Instant hireDateTo,
-        String status,
+        EmployeeStatus status,
         Pageable pageable);
 
 }

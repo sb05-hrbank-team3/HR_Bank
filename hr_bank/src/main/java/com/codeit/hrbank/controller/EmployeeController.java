@@ -4,6 +4,7 @@ import com.codeit.hrbank.dto.data.CursorPageResponse;
 import com.codeit.hrbank.dto.data.EmployeeDTO;
 import com.codeit.hrbank.dto.request.EmployeeCreateRequest;
 import com.codeit.hrbank.dto.request.EmployeeUpdateRequest;
+import com.codeit.hrbank.entity.EmployeeStatus;
 import com.codeit.hrbank.service.EmployeeService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.Instant;
@@ -53,7 +54,7 @@ public class EmployeeController {
         @RequestParam(required = false) String position,
         @RequestParam(required = false) Instant hireDateFrom,
         @RequestParam(required = false) Instant hireDateTo,
-        @RequestParam(required = false) String status,
+        @RequestParam(required = false) EmployeeStatus status,
         @PageableDefault(
             // size = 10, page = 0 default
             sort = "hireDate",
