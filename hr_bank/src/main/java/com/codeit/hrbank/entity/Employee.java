@@ -1,5 +1,7 @@
 package com.codeit.hrbank.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -21,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "employees")
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Employee {
@@ -50,11 +52,12 @@ public class Employee {
   @Column(nullable = false)
   private EmployeeStatus status;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "binary_content_id", nullable = false)
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "binary_content_id")
   private BinaryContent binaryContent;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "department_id", nullable = false)
+  @JsonIgnore
   private Department department;
 }
