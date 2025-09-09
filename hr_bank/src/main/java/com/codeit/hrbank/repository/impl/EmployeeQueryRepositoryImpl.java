@@ -1,7 +1,11 @@
 package com.codeit.hrbank.repository.impl;
 
+import com.codeit.hrbank.dto.data.BinaryContentDTO;
+import com.codeit.hrbank.dto.data.DepartmentDTO;
 import com.codeit.hrbank.dto.data.EmployeeDTO;
 import com.codeit.hrbank.entity.EmployeeStatus;
+import com.codeit.hrbank.entity.QBinaryContent;
+import com.codeit.hrbank.entity.QDepartment;
 import com.codeit.hrbank.entity.QEmployee;
 import com.codeit.hrbank.repository.EmployeeQueryRepository;
 import com.querydsl.core.types.Projections;
@@ -19,6 +23,8 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
   private final JPAQueryFactory queryFactory;
 
   private static final QEmployee e = QEmployee.employee;
+  private static final QDepartment d = QDepartment.department;
+  private static final QBinaryContent b = QBinaryContent.binaryContent;
 
   @Override
   public List<EmployeeDTO> findAllQEmployeesPart(
@@ -37,9 +43,25 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
             e.name,
             e.email,
             e.employeeNumber,
-            e.position
+            e.hireDate,
+            e.position,
+            e.status,
+            Projections.constructor(BinaryContentDTO.class,
+                e.binaryContent.id,
+                e.binaryContent.name,
+                e.binaryContent.size,
+                e.binaryContent.contentType
+            ),
+            Projections.constructor(DepartmentDTO.class,
+                e.department.id,
+                e.department.name,
+                e.department.description,
+                e.department.establishedDate
+            )
         ))
-        .from(e);
+        .from(e)
+        .leftJoin(e.department, d)
+        .leftJoin(e.binaryContent, b);
 
     // 조건 추가
     if (nameOrEmail != null && !nameOrEmail.isEmpty()) {

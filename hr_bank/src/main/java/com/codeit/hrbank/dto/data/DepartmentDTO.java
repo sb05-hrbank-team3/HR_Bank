@@ -1,5 +1,6 @@
 package com.codeit.hrbank.dto.data;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +13,7 @@ public record DepartmentDTO(
   Long id,
   String name,
   String description,
-  String establishedDate,
+  Instant establishedDate,
   Integer employeeCount
 
 ){}
