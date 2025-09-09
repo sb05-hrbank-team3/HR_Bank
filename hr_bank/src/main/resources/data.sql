@@ -1,82 +1,3 @@
--- 부서
-CREATE TABLE departments
-(
-    id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(20) NOT NULL,
-    description VARCHAR(100) NOT NULL,
-    established_date TIMESTAMP WITH TIME ZONE NOT NULL
-);
-
--- 파일
-CREATE TABLE binary_contents
-(
-    id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    size BIGINT NOT NULL,
-    content_type VARCHAR(100) NOT NULL
-);
-
--- 직원
-CREATE TABLE employees
-(
-    id BIGSERIAL PRIMARY KEY,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    name VARCHAR(20) NOT NULL,
-    employee_number VARCHAR(100) NOT NULL UNIQUE,
-    hire_date TIMESTAMP WITH TIME ZONE NOT NULL,
-    position VARCHAR(30) NOT NULL,
-    status VARCHAR(20) NOT NULL,
-    binary_content_id BIGINT,
-    department_id BIGINT NOT NULL,
-    CONSTRAINT fk_employee_file
-        FOREIGN KEY (binary_content_id) REFERENCES binary_contents (id)
-            ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT fk_employee_department
-        FOREIGN KEY (department_id) REFERENCES departments (id)
-            ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- 변경 로그
-CREATE TABLE change_logs
-(
-    id BIGSERIAL PRIMARY KEY,
-    type VARCHAR(20) NOT NULL,
-    ip_address VARCHAR(100) NOT NULL,
-    memo VARCHAR(100) NOT NULL,
-    at TIMESTAMP WITH TIME ZONE NOT NULL,
-    employee_id BIGINT NOT NULL,
-    CONSTRAINT fk_changelog_employee
-        FOREIGN KEY (employee_id) REFERENCES employees (id)
-            ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- 변경 이력 상세
-CREATE TABLE histories
-(
-    id BIGSERIAL PRIMARY KEY,
-    property_name VARCHAR(30),
-    before VARCHAR(100),
-    after VARCHAR(100),
-    log_id BIGINT NOT NULL,
-    CONSTRAINT fk_history_changelog
-        FOREIGN KEY (log_id) REFERENCES change_logs (id)
-            ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- 백업
-CREATE TABLE backups
-(
-    id BIGSERIAL PRIMARY KEY,
-    worker VARCHAR(20) NOT NULL,
-    started_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    ended_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    status VARCHAR(20) NOT NULL,
-    binary_content_id BIGINT NOT NULL,
-    CONSTRAINT fk_backup_file
-        FOREIGN KEY (binary_content_id) REFERENCES binary_contents (id)
-            ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 -- 1. 부서 (20개)
 INSERT INTO departments (id, name, description, established_date)
 VALUES (1, 'Dept1', '테스트 부서 1', '2010-01-01'),
@@ -130,6 +51,7 @@ VALUES (1, 'file1.png', 1024, 'image/png'),
 
 -- 3. 직원 (20개) → 부서/파일과 FK 맞춤
 INSERT INTO employees (id, email, name, employee_number, hire_date, position, status,
+
                        binary_content_id, department_id)
 VALUES (1, 'user1@example.com', 'User1', 'EMP001', '2020-01-01', 'Staff', 'ACTIVE', 1, 1),
        (2, 'user2@example.com', 'User2', 'EMP002', '2020-02-01', 'Manager', 'ACTIVE', 2, 2),
@@ -220,19 +142,3 @@ VALUES (1, 'admin', '2025-01-01', '2025-01-01', 'COMPLETED', 3),
        (18, 'system', '2025-01-18', '2025-01-18', 'IN_PROGRESS', 20),
        (19, 'admin', '2025-01-19', '2025-01-19', 'COMPLETED', 1),
        (20, 'system', '2025-01-20', '2025-01-20', 'FAILED', 2);
-
--- -- 하위 테이블부터 삭제
-DROP TABLE IF EXISTS histories CASCADE;
-DROP TABLE IF EXISTS change_logs CASCADE;
-DROP TABLE IF EXISTS backups CASCADE;
-DROP TABLE IF EXISTS employees CASCADE;
-DROP TABLE IF EXISTS binary_contents CASCADE;
-DROP TABLE IF EXISTS departments CASCADE;
-
-CREATE USER hrbank_user WITH PASSWORD 'hrbank_1234';
-GRANT ALL PRIVILEGES ON DATABASE hrbank TO hrbank_user;
--- 모든 테이블 권한
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO hrbank_user;
-
--- 모든 시퀀스 권한
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO hrbank_user;

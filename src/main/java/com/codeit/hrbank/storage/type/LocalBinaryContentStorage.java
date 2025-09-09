@@ -1,7 +1,7 @@
-package com.codeit.hrbank.storage.storage.type;
+package com.codeit.hrbank.storage.type;
 
 import com.codeit.hrbank.dto.data.BinaryContentDTO;
-import com.codeit.hrbank.storage.storage.BinaryContentStorage;
+import com.codeit.hrbank.storage.BinaryContentStorage;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,15 +18,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-@ConditionalOnProperty(name = "discodeit.storage.type", havingValue = "local")
+@ConditionalOnProperty(name = "hrbank.storage.type", havingValue = "local")
 @Component
 public class LocalBinaryContentStorage implements BinaryContentStorage {
 
   private final Path root;
 
-  public LocalBinaryContentStorage(
-      @Value("${discodeit.storage.local.root-path}") Path root
-  ) {
+  public LocalBinaryContentStorage(@Value("${hrbank.storage.local.root-path}") Path root) {
     this.root = root;
   }
 
@@ -76,13 +74,25 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
   public ResponseEntity<Resource> download(BinaryContentDTO metaData) {
     InputStream inputStream = get(metaData.id());
     Resource resource = new InputStreamResource(inputStream);
-    
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .header(HttpHeaders.CONTENT_DISPOSITION,
-            "attachment; filename=\"" + metaData.name() + "\"")
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + metaData.name() + "\"")
         .header(HttpHeaders.CONTENT_TYPE, metaData.contentType())
-        .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(metaData.size()))
-        .body(resource);
+        .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(metaData.size())).body(resource);
+  }
+
+  @Override
+  public void delete(Long id) {
+    Path filePath = resolvePath(id);
+    if (Files.exists(filePath)) {
+      try {
+        Files.delete(filePath);
+      } catch (IOException e) {
+        e.printStackTrace();
+        throw new RuntimeException(e);
+      }
+    } else {
+      throw new NoSuchElementException("File with key " + id + " does not exist");
+    }
   }
 }
