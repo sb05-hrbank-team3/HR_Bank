@@ -44,6 +44,6 @@ public class Backup {
   private BackupStatus status;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "file_id", nullable = false)
+  @JoinColumn(name = "binary_content_id", nullable = false)
   private BinaryContent file;
 }
