@@ -28,3 +28,9 @@ logging:  # logging 처리
   level:
     org.springframework: INFO
     org.hibernate.SQL: WARN
+
+hrbank:
+  storage:
+    type: local
+    local:
+      root-path: ./storage
