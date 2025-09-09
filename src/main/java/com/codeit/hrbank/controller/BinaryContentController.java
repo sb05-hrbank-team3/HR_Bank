@@ -2,8 +2,6 @@ package com.codeit.hrbank.controller;
 
 import com.codeit.hrbank.dto.data.BinaryContentDTO;
 import com.codeit.hrbank.dto.request.BinaryContentUpdateRequest;
-import com.codeit.hrbank.dto.response.BinaryContentResponse;
-import com.codeit.hrbank.mapper.BinaryContentMapper;
 import com.codeit.hrbank.service.BinaryContentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -18,38 +16,38 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BinaryContentController {
 
-  private final BinaryContentService service;
+  private final BinaryContentService binaryContentService;
 
   @PostMapping(consumes = {"multipart/form-data"})
-  public BinaryContentResponse upload(@RequestPart("file") MultipartFile file) {
-    BinaryContentDTO dto = service.create(file);
-    return BinaryContentMapper.toResponse(dto);
+  public BinaryContentDTO upload(@RequestPart("file") MultipartFile file) {
+    BinaryContentDTO dto = binaryContentService.create(file);
+    return dto;
   }
 
   @GetMapping("/{id}")
-  public BinaryContentResponse get(@PathVariable Long id) {
-    return BinaryContentMapper.toResponse(service.get(id));
+  public BinaryContentDTO get(@PathVariable Long id) {
+    return binaryContentService.get(id);
   }
 
   @GetMapping
-  public List<BinaryContentResponse> list(@RequestParam(defaultValue = "10") int size,
+  public List<BinaryContentDTO> list(@RequestParam(defaultValue = "10") int size,
       @RequestParam(required = false) Long idAfter) {
-    return service.list(size, idAfter).stream().map(BinaryContentMapper::toResponse).toList();
+    return binaryContentService.list(size, idAfter);
   }
 
   @PatchMapping("/{id}")
-  public BinaryContentResponse updateName(@PathVariable Long id,
+  public BinaryContentDTO updateName(@PathVariable Long id,
       @RequestBody BinaryContentUpdateRequest request) {
-    return BinaryContentMapper.toResponse(service.update(id, request));
+    return binaryContentService.update(id, request);
   }
 
   @DeleteMapping("/{id}")
   public void delete(@PathVariable Long id) {
-    service.delete(id);
+    binaryContentService.delete(id);
   }
 
   @GetMapping("/{id}/download")
   public ResponseEntity<Resource> download(@PathVariable Long id) {
-    return service.download(id);
+    return binaryContentService.download(id);
   }
 }
