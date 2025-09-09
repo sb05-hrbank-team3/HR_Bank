@@ -4,10 +4,12 @@ import com.codeit.hrbank.dto.data.CursorPageResponse;
 import com.codeit.hrbank.dto.data.EmployeeDTO;
 import com.codeit.hrbank.dto.request.EmployeeCreateRequest;
 import com.codeit.hrbank.dto.request.EmployeeUpdateRequest;
+import com.codeit.hrbank.entity.Department;
 import com.codeit.hrbank.entity.Employee;
 import com.codeit.hrbank.entity.EmployeeStatus;
 import com.codeit.hrbank.mapper.EmployeeMapper;
 import com.codeit.hrbank.mapper.PageResponseMapper;
+import com.codeit.hrbank.repository.DepartmentRepository;
 import com.codeit.hrbank.repository.EmployeeRepository;
 import com.codeit.hrbank.service.EmployeeService;
 import java.time.Instant;
@@ -25,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class EmployeeServiceImpl implements EmployeeService {
 
   private final EmployeeRepository employeeRepository;
+  private final DepartmentRepository departmentRepository;
   private final EmployeeMapper employeeMapper;
   private final PageResponseMapper pageResponseMapper;
 
@@ -32,7 +35,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   @Transactional(readOnly = true)
   public EmployeeDTO findById(Long employeeId) {
     Employee employee = employeeRepository.findById(employeeId).orElseThrow(
-        () -> new NoSuchElementException(" 회원이 존재하지 않습니다"));
+        () -> new NoSuchElementException("회원이 존재하지 않습니다"));
 
     return employeeMapper.toDTO(employee);
   }
@@ -40,7 +43,10 @@ public class EmployeeServiceImpl implements EmployeeService {
   @Override
   @Transactional
   public EmployeeDTO createEmployee(EmployeeCreateRequest request, MultipartFile profile) {
-    // 1. employeeNumber 생성 (EMP-YYYY-XXX)
+    Department department = departmentRepository.findById(request.departmentId()).orElseThrow(
+        () -> new NoSuchElementException("부서를 찾을 수 없습니다."));
+
+    // employeeNumber 생성 (EMP-YYYY-XXX)
     int year = request.hireDate().atZone(ZoneId.systemDefault()).getYear();
     String lastEmployeeNumber = employeeRepository.findLastEmployeeNumberByYear(year);
 
@@ -56,7 +62,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         .name(request.name())
         .email(request.email())
         .employeeNumber(newEmployeeNumber)
-        // department 불러오는거 필요함.
+        .department(department)
         .position(request.position())
         .hireDate(request.hireDate())
         .status(EmployeeStatus.ACTIVE)
@@ -72,18 +78,22 @@ public class EmployeeServiceImpl implements EmployeeService {
   @Override
   public EmployeeDTO updateEmployee(Long employeeId, EmployeeUpdateRequest request,
       MultipartFile profile) {
+    Department department = departmentRepository.findById(request.departmentId()).orElseThrow(
+        () -> new NoSuchElementException("부서를 찾을 수 없습니다."));
+
     Employee employee = employeeRepository.findById(employeeId).orElseThrow(
         () -> new NoSuchElementException(" 회원이 존재하지 않습니다"));
 
     Employee updateEmployee = employee.toBuilder()
         .name(request.name())
         .email(request.email())
-        // department 불러오는거 필요함.
+        .department(department)
         .position(request.position())
         .hireDate(request.hireDate())
         // 메모는 어따가 넣어?
         .build();
     // profile 삽입하는것 사용해야함.
+
     Employee save = employeeRepository.save(updateEmployee);
     return employeeMapper.toDTO(save);
   }
