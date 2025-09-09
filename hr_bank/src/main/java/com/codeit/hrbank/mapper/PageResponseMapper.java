@@ -1,6 +1,6 @@
 package com.codeit.hrbank.mapper;
 
-import com.codeit.hrbank.dto.data.CursorPageResponse;
+import com.codeit.hrbank.dto.response.CursorPageResponse;
 import org.mapstruct.Mapper;
 import org.springframework.data.domain.Page;
 
