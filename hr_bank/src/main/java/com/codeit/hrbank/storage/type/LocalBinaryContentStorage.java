@@ -1,7 +1,7 @@
-package com.codeit.hrbank.storage.storage.type;
+package com.codeit.hrbank.storage.type;
 
 import com.codeit.hrbank.dto.data.BinaryContentDTO;
-import com.codeit.hrbank.storage.storage.BinaryContentStorage;
+import com.codeit.hrbank.storage.BinaryContentStorage;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;

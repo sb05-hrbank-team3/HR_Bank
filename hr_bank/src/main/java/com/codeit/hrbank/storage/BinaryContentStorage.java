@@ -1,4 +1,4 @@
-package com.codeit.hrbank.storage.storage;
+package com.codeit.hrbank.storage;
 
 import com.codeit.hrbank.dto.data.BinaryContentDTO;
 import java.io.InputStream;
