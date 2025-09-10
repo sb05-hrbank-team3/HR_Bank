@@ -23,10 +23,15 @@ import com.codeit.hrbank.storage.BinaryContentStorage;
 import com.codeit.hrbank.util.ChangeLogUtils;
 import jakarta.persistence.EntityManager;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -88,7 +93,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         .status(EmployeeStatus.ACTIVE)
         .binaryContent(binaryContent)
         .build();
-    Employee savedEmployee = employeeRepository.save(employee);
+    
+    // 영속성 컨텍스트를 위한.
+    Employee savedEmployee = entityManager.merge(employee);
 
     // ChangeLog + History
     ChangeLog changeLog = ChangeLogUtils.createChangeLog(ChangeLogType.CREATED, ipAddress, request.memo(), savedEmployee);
@@ -111,7 +118,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   @Transactional
-  public EmployeeDTO updateEmployee(Long employeeId, EmployeeUpdateRequest request, MultipartFile profile, String ipAddress) {
+  public EmployeeDTO updateEmployee(Long employeeId, EmployeeUpdateRequest request,
+      MultipartFile profile, String ipAddress) {
+
     Employee employee = employeeRepository.findById(employeeId)
         .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다"));
 
@@ -122,6 +131,7 @@ public class EmployeeServiceImpl implements EmployeeService {
       throw new IllegalArgumentException("중복되는 이메일이 있습니다.");
     }
 
+    // 파일 처리
     BinaryContent binaryContent = null;
     if (profile != null && !profile.isEmpty()) {
       binaryContent = BinaryContent.builder()
@@ -130,6 +140,7 @@ public class EmployeeServiceImpl implements EmployeeService {
           .contentType(profile.getContentType())
           .build();
       binaryContentRepository.save(binaryContent);
+
       try {
         binaryContentStorage.putFile(binaryContent.getId(), profile.getBytes(), binaryContent.getName());
       } catch (IOException e) {
@@ -137,27 +148,32 @@ public class EmployeeServiceImpl implements EmployeeService {
       }
     }
 
+    // 기존 Employee 상태 복사
+    Employee oldEmployee = employee.toBuilder().build();
+
+    // toBuilder 사용하여 업데이트
     Employee updatedEmployee = employee.toBuilder()
         .name(request.name() != null ? request.name() : employee.getName())
         .email(request.email() != null ? request.email() : employee.getEmail())
         .department(department)
         .position(request.position() != null ? request.position() : employee.getPosition())
-        .hireDate(employee.getHireDate())
         .binaryContent(binaryContent != null ? binaryContent : employee.getBinaryContent())
         .build();
 
     Employee savedEmployee = employeeRepository.save(updatedEmployee);
 
+    // ChangeLog + History 생성
     ChangeLog changeLog = ChangeLogUtils.createChangeLog(ChangeLogType.UPDATED, ipAddress, request.memo(), savedEmployee);
     changeLogRepository.save(changeLog);
 
-    List<History> histories = ChangeLogUtils.createHistoriesForUpdate(changeLog, employee, savedEmployee);
+    List<History> histories = ChangeLogUtils.createHistoriesForUpdate(changeLog, oldEmployee, savedEmployee);
     if (!histories.isEmpty()) {
       historyRepository.saveAll(histories);
     }
 
     return employeeMapper.toDTO(savedEmployee);
   }
+
 
   @Override
   @Transactional
@@ -171,7 +187,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     List<History> histories = ChangeLogUtils.createHistoriesForDelete(changeLog, employee);
     historyRepository.saveAll(histories);
 
-    employeeRepository.deleteById(employeeId);
+    Employee managedEmployee = entityManager.merge(employee);
+    entityManager.remove(managedEmployee);
 
     if (employee.getBinaryContent() != null) {
       binaryContentRepository.deleteById(employee.getBinaryContent().getId());
