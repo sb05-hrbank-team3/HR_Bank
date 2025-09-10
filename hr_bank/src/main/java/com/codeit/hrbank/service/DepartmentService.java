@@ -4,9 +4,6 @@ import com.codeit.hrbank.dto.data.DepartmentDTO;
 import com.codeit.hrbank.dto.request.DepartmentCreateRequest;
 import com.codeit.hrbank.dto.request.DepartmentUpdateRequest;
 import com.codeit.hrbank.dto.response.CursorPageResponse;
-import com.codeit.hrbank.entity.Department;
-import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 
 public interface DepartmentService {

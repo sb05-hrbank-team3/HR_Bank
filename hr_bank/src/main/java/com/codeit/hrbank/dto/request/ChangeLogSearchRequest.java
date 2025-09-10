@@ -1,19 +1,15 @@
 package com.codeit.hrbank.dto.request;
 
 import com.codeit.hrbank.entity.ChangeLogType;
-import java.time.Instant;
-import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDate;
 
 public record ChangeLogSearchRequest(
     String employeeNumber,
     String memo,
     String ipAddress,
     ChangeLogType type,
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    Instant atFrom,
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    Instant atTo,
+    LocalDate atFrom,
+    LocalDate atTo,
 
     Long idAfter,
     String cursor,

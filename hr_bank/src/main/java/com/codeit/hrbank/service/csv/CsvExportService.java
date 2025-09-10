@@ -49,9 +49,8 @@ public class CsvExportService {
 
       // 데이터 작성
       for (Employee emp : employees) {
-        LocalDate localDate = emp.getHireDate().atZone(ZoneId.of("Asia/Seoul")).toLocalDate();
         // yyyy-MM-dd 형식으로 포맷
-        String formattedDate = localDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+        String formattedDate = emp.getHireDate().format(DateTimeFormatter.ISO_LOCAL_DATE);
 
         String[] data = {
             emp.getId().toString(),

@@ -7,7 +7,7 @@ import com.codeit.hrbank.dto.response.CursorPageResponse;
 import com.codeit.hrbank.entity.EmployeeStatus;
 import com.codeit.hrbank.service.EmployeeService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.time.Instant;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
@@ -37,8 +37,10 @@ public class EmployeeController {
 
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<EmployeeDTO> createEmployee(@RequestPart EmployeeCreateRequest employee,
-      @RequestPart(required = false) MultipartFile profile) {
-    EmployeeDTO entity = employeeService.createEmployee(employee, profile);
+      @RequestPart(required = false) MultipartFile profile,
+      HttpServletRequest servletRequest) {
+    String clientIp = servletRequest.getRemoteAddr();
+    EmployeeDTO entity = employeeService.createEmployee(employee, profile, clientIp);
     return ResponseEntity.status(HttpStatus.CREATED).body(entity); // 201 Created
   }
 
@@ -54,10 +56,8 @@ public class EmployeeController {
       @RequestParam(required = false) String employeeNumber,
       @RequestParam(required = false) String departmentName,
       @RequestParam(required = false) String position,
-      @RequestParam(required = false)
-      @DateTimeFormat(iso = ISO.DATE) LocalDate hireDateFrom,
-      @RequestParam(required = false)
-      @DateTimeFormat(iso = ISO.DATE) LocalDate hireDateTo,
+      @RequestParam(required = false) LocalDate hireDateFrom,
+      @RequestParam(required = false) LocalDate hireDateTo,
       @RequestParam(required = false) EmployeeStatus status,
       @RequestParam(required = false) Long idAfter,
       @RequestParam(required = false) String cursor,    // 일단 보류 cursor
@@ -66,11 +66,9 @@ public class EmployeeController {
       @RequestParam(required = false, defaultValue = "asc") String sortDirection
   ) {
     // Swagger 이상꼼수 별 문제없으면 이렇게 진행
-    Instant hireFrom = hireDateFrom != null ? hireDateFrom.atStartOfDay(ZoneId.systemDefault()).toInstant() : null;
-    Instant hireTo = hireDateTo != null ? hireDateTo.atStartOfDay(ZoneId.systemDefault()).toInstant() : null;
 
     CursorPageResponse<EmployeeDTO> response = employeeService.findAllByPart(
-        nameOrEmail, employeeNumber, departmentName, position, hireFrom, hireTo, status,
+        nameOrEmail, employeeNumber, departmentName, position, hireDateFrom, hireDateTo, status,
         idAfter, size, sortField, sortDirection);
 
     return ResponseEntity.ok(response);
@@ -80,14 +78,17 @@ public class EmployeeController {
   public ResponseEntity<EmployeeDTO> updateEmployee(
       @PathVariable("id") Long employeeId,
       @RequestPart EmployeeUpdateRequest employee,
-      @RequestPart(required = false) MultipartFile profile) {
-    EmployeeDTO entity = employeeService.updateEmployee(employeeId, employee, profile);
+      @RequestPart(required = false) MultipartFile profile,
+      HttpServletRequest servletRequest) {
+    String clientIp = servletRequest.getRemoteAddr();
+    EmployeeDTO entity = employeeService.updateEmployee(employeeId, employee, profile, clientIp);
     return ResponseEntity.status(HttpStatus.OK).body(entity);
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
-    employeeService.deleteEmployee(id);
+  public ResponseEntity<String> deleteEmployee(@PathVariable Long id, HttpServletRequest servletRequest) {
+    String clientIp = servletRequest.getRemoteAddr();
+    employeeService.deleteEmployee(id, clientIp);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).body("삭제 성공");
   }
 }

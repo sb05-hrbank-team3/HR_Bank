@@ -7,7 +7,7 @@ import com.codeit.hrbank.entity.EmployeeStatus;
 import com.codeit.hrbank.repository.EmployeeQueryRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -24,8 +24,8 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
       String employeeNumber,
       String departmentName,
       String position,
-      Instant hireDateFrom,
-      Instant hireDateTo,
+      LocalDate hireDateFrom,
+      LocalDate hireDateTo,
       EmployeeStatus status,
       Long idAfter,
       Integer size,

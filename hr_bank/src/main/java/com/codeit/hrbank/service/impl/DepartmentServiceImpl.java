@@ -9,7 +9,7 @@ import com.codeit.hrbank.mapper.DepartmentMapper;
 import com.codeit.hrbank.mapper.PageResponseMapper;
 import com.codeit.hrbank.repository.DepartmentRepository;
 import com.codeit.hrbank.service.DepartmentService;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
@@ -34,11 +34,10 @@ public class DepartmentServiceImpl implements DepartmentService {
       throw new IllegalArgumentException("부서명은 중복될 수 없습니다.");
     }
 
-    Instant date = request.establishedDate().atStartOfDay(ZoneId.systemDefault()).toInstant();
     Department department = Department.builder()
         .name(request.name())
         .description(request.description())
-        .establishedDate(date)
+        .establishedDate(request.establishedDate())
         .build();
 
     Department save = departmentRepository.save(department);
