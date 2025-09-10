@@ -6,12 +6,14 @@ import com.codeit.hrbank.dto.request.DepartmentUpdateRequest;
 import com.codeit.hrbank.dto.response.CursorPageResponse;
 import com.codeit.hrbank.entity.Department;
 import com.codeit.hrbank.mapper.DepartmentMapper;
+import com.codeit.hrbank.mapper.PageResponseMapper;
 import com.codeit.hrbank.repository.DepartmentRepository;
 import com.codeit.hrbank.service.DepartmentService;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 public class DepartmentServiceImpl implements DepartmentService {
 
   private final DepartmentRepository departmentRepository;
+  private final PageResponseMapper pageResponseMapper;
   private final DepartmentMapper departmentMapper;
 
 
@@ -58,21 +61,32 @@ public class DepartmentServiceImpl implements DepartmentService {
         )
     ).orElse(Collections.emptyList());
 
-    // DTO 변환
+    // hasNext 판별 및 초과분 제거
+    boolean hasNext = departments.size() > size;
+    if (hasNext) {
+      departments = departments.subList(0, size);
+    }
+
+    List<Long> deptIds = departments.stream().map(Department::getId).toList();
+    Map<Long, Long> employeeCounts = departmentRepository.findEmployeeCountsByDepartmentIds(
+        deptIds);
+
+    // DTO 변환 + Employee count 매핑
     List<DepartmentDTO> content = departments.stream()
-        .map(departmentMapper::toDTO)
+        .map(d -> DepartmentDTO.builder()
+            .id(d.getId())
+            .name(d.getName())
+            .description(d.getDescription())
+            .employeeCount(employeeCounts.getOrDefault(d.getId(), 0L)) // null이면 0으로
+            .build())
         .toList();
 
-    // 다음 커서 구하기 (예: 마지막 ID, 시간 등 기준으로)
-    String nextCursor = content.isEmpty() ? null : String.valueOf(content.get(content.size() - 1).id());
+    // 다음 cursor 계산
+    Long nextIdAfter = !departments.isEmpty() ? departments.get(departments.size() - 1).getId() : null;
+    String nextCursor = nextIdAfter != null ? String.valueOf(nextIdAfter) : null;
 
     // CursorPageResponse 반환
-    return CursorPageResponse.<DepartmentDTO>builder()
-        .content(content)
-        .size(size)
-        .nextCursor(nextCursor)
-        .hasNext(content.size() == size)
-        .build();
+    return pageResponseMapper.fromCursor(content, size, nextCursor, nextIdAfter, hasNext);
   }
 
 
