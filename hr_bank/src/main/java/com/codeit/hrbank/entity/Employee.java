@@ -52,11 +52,11 @@ public class Employee {
   @Column(nullable = false)
   private EmployeeStatus status;
 
-  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "binary_content_id")
   private BinaryContent binaryContent;
 
-  @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "department_id", nullable = false)
   @JsonIgnore
   private Department department;
