@@ -78,14 +78,13 @@ public class EmployeeServiceImpl implements EmployeeService {
       }
     }
 
-    LocalDate hireDate = request.hireDate().atStartOfDay(ZoneId.systemDefault()).toLocalDate();
     Employee employee = Employee.builder()
         .name(request.name())
         .email(request.email())
         .employeeNumber(newEmployeeNumber)
         .department(department)
         .position(request.position())
-        .hireDate(hireDate)
+        .hireDate(request.hireDate())
         .status(EmployeeStatus.ACTIVE)
         .binaryContent(binaryContent)
         .build();
