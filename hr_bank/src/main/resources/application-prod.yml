@@ -28,3 +28,14 @@ logging:  # logging 처리
   level:
     org.springframework: INFO
     org.hibernate.SQL: WARN
+
+hrbank:
+  storage:
+    type: local
+    local:
+      root-path: ./storage
+
+
+batch:  #batch 파일 저장 경로
+  file:
+    output-path: /backup/output/employee_data.csv
