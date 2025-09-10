@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
-
+@Builder
 public record DepartmentDTO(
   Long id,
   String name,

@@ -29,7 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/departments")
+@RequestMapping("/api/departments")
 public class DepartmentController {
 
   private final DepartmentService departmentService;

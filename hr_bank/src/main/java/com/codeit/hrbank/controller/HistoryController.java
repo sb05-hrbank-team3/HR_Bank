@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/change-logs")
+@RequestMapping("/api/change-logs")
 @RequiredArgsConstructor
 public class HistoryController {
 
