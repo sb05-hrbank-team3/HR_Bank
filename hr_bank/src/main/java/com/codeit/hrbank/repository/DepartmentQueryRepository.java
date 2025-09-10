@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 public interface DepartmentQueryRepository {
   List<Department> findAndSortDepartments(String nameOrDescription,
-      Instant cursor,
+      String cursor,
       Long idAfter,
       int size,
       String sortField,

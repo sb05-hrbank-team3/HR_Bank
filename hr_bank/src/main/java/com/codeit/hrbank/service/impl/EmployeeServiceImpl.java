@@ -98,7 +98,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     Department department = departmentRepository.findById(request.departmentId())
         .orElseThrow(() -> new NoSuchElementException("부서를 찾을 수 없습니다."));
 
-    if (employeeRepository.existsByEmail(request.email())) {
+    if (employeeRepository.existsByEmailAndIdNot(request.email(), employeeId)) {
       throw new IllegalArgumentException("중복되는 이메일이 있습니다.");
     }
 

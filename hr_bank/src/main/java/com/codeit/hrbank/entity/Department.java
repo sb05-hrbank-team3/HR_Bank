@@ -21,7 +21,6 @@ import lombok.Setter;
 @Table(name = "departments")
 @Getter
 @Builder
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Department {
@@ -37,6 +36,5 @@ public class Department {
   private String description;
 
   @Column(name = "established_date", nullable = false)
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private Instant establishedDate;
 }
