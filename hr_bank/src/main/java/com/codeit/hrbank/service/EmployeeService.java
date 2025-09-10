@@ -11,11 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 public interface EmployeeService {
     EmployeeDTO findById(Long employeeId);
 
-    EmployeeDTO createEmployee(EmployeeCreateRequest request, MultipartFile profile);
+    EmployeeDTO createEmployee(EmployeeCreateRequest request, MultipartFile profile, String ipAddress);
 
-    EmployeeDTO updateEmployee(Long employeeId, EmployeeUpdateRequest request, MultipartFile profile);
+    EmployeeDTO updateEmployee(Long employeeId, EmployeeUpdateRequest request, MultipartFile profile, String ipAddress);
 
-    void deleteEmployee(Long employeeId);
+    void deleteEmployee(Long employeeId, String ipAddress);
 
     CursorPageResponse<EmployeeDTO> findAllByPart(
         String nameOrEmail,
