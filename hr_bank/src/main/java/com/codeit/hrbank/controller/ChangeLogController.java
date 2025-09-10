@@ -1,12 +1,11 @@
 package com.codeit.hrbank.controller;
 
 import com.codeit.hrbank.dto.request.ChangeLogCreateRequest;
-import com.codeit.hrbank.dto.response.ChangeLogCreateResponse;
+import com.codeit.hrbank.dto.data.ChangeLogDTO;
 import com.codeit.hrbank.service.ChangeLogService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +18,8 @@ public class ChangeLogController {
   private final ChangeLogService changeLogService;
 
   @PostMapping
-  public ResponseEntity<ChangeLogCreateResponse> createChangeLog(@RequestBody ChangeLogCreateRequest changeLogCreateRequest, HttpServletRequest httpServletRequest) {
-    ChangeLogCreateResponse response = changeLogService.createChangeLog(changeLogCreateRequest, getClientIp(httpServletRequest));
+  public ResponseEntity<ChangeLogDTO> createChangeLog(@RequestBody ChangeLogCreateRequest changeLogCreateRequest, HttpServletRequest httpServletRequest) {
+    ChangeLogDTO response = changeLogService.createChangeLog(changeLogCreateRequest, getClientIp(httpServletRequest));
     return ResponseEntity.ok(response);
   }
 
