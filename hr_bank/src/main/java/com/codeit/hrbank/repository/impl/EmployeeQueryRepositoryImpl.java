@@ -57,6 +57,7 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
                 e.department.name,
                 e.department.description,
                 e.department.establishedDate
+
             )
         ))
         .from(e)

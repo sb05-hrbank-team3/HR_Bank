@@ -28,7 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/employees")
+@RequestMapping("/api/employees")
 @Tag(name = "직원 관리")
 public class EmployeeController {
     private final EmployeeService employeeService;
