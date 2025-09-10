@@ -1,15 +1,17 @@
-package com.codeit.hrbank.dto.response;
+package com.codeit.hrbank.dto.data;
 
 import com.codeit.hrbank.entity.ChangeLogType;
 import java.time.Instant;
+import java.util.List;
 
-public record ChangeLogCreateResponse(
+public record ChangeLogDTO(
     Long id,
     ChangeLogType type,
     String employeeNumber,
     String memo,
     String ipAddress,
-    Instant at
+    Instant at,
+    List<HistoryDTO> histories
 ) {
 
 }

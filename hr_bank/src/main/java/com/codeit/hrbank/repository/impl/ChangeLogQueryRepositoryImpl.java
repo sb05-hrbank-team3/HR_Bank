@@ -1,6 +1,5 @@
 package com.codeit.hrbank.repository.impl;
 
-
 import com.codeit.hrbank.entity.ChangeLog;
 import com.codeit.hrbank.entity.QChangeLog;
 import com.codeit.hrbank.entity.QDepartment;
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class ChangeLogQueryRepositoryImpl implements ChangeLogQueryRepository {
-
+  
   private final JPAQueryFactory queryFactory;
   private static QChangeLog changeLog = QChangeLog.changeLog;
 
@@ -31,5 +30,6 @@ public class ChangeLogQueryRepositoryImpl implements ChangeLogQueryRepository {
         .where(where)
         .orderBy(changeLog.at.desc())
         .fetchFirst();
+
   }
 }

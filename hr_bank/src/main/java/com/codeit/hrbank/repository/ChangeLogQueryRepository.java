@@ -9,4 +9,3 @@ public interface ChangeLogQueryRepository {
 
   ChangeLog findChangeLog();
 
-}
