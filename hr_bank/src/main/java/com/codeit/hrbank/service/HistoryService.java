@@ -6,7 +6,7 @@ import com.codeit.hrbank.dto.request.HistoryUpdateRequest;
 import java.util.List;
 
 public interface HistoryService {
-  HistoryDTO create(HistoryCreateRequest request);
+  HistoryDTO create(Long changeLogId, HistoryCreateRequest request);
   HistoryDTO find(Long id);
   List<HistoryDTO> findAllByChangeLogsId(Long logId);
   HistoryDTO update(Long id, HistoryUpdateRequest request);
