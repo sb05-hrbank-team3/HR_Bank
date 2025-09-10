@@ -7,11 +7,11 @@ import org.springframework.http.ResponseEntity;
 
 public interface BinaryContentStorage {
 
-  Long put(Long id, byte[] data);
+  Long putFile(Long id, byte[] data, String FileName);
 
-  InputStream get(Long id);
+  InputStream getFile(Long id);
 
-  ResponseEntity<Resource> download(BinaryContentDTO binaryContentDTO);
+  ResponseEntity<Resource> downloadFile(BinaryContentDTO binaryContentDTO);
 
-  void delete(Long id);
+  void deleteFile(Long id);
 }

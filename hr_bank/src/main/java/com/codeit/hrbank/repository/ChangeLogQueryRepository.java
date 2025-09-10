@@ -1,8 +1,11 @@
 package com.codeit.hrbank.repository;
 
-import com.codeit.hrbank.dto.request.ChangeLogListRequest;
-import com.codeit.hrbank.dto.response.ChangeLogListResponse;
+import com.codeit.hrbank.entity.ChangeLog;
+import com.codeit.hrbank.entity.Department;
+import java.time.Instant;
+import java.util.List;
 
 public interface ChangeLogQueryRepository {
-  ChangeLogListResponse search(ChangeLogListRequest request);
-}
+
+  ChangeLog findChangeLog();
+

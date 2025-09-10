@@ -9,14 +9,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import java.time.*;
 import java.time.format.*;
+import org.mapstruct.Mappings;
 
 
 @Mapper(componentModel = "spring" ,builder = @Builder(disableBuilder = false) , imports = {LocalDate.class, ZoneId.class})
 public interface DepartmentMapper {
 
-  @Mapping(target = "establishedDate",
-      expression = "java(dto.establishedDate() == null ? null : " +
-          "LocalDate.parse(dto.establishedDate()).atStartOfDay(ZoneId.systemDefault()).toInstant())")
+
   Department toEntity(DepartmentCreateRequest dto);
 
   DepartmentDTO toDTO(Department entity);

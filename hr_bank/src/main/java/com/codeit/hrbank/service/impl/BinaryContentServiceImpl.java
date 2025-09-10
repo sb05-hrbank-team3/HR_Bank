@@ -8,15 +8,16 @@ import com.codeit.hrbank.mapper.BinaryContentMapper;
 import com.codeit.hrbank.repository.BinaryContentRepository;
 import com.codeit.hrbank.service.BinaryContentService;
 import com.codeit.hrbank.storage.BinaryContentStorage;
-import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -24,22 +25,23 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 public class BinaryContentServiceImpl implements BinaryContentService {
 
-  private final BinaryContentRepository repository;
+  private final BinaryContentRepository binaryContentRepository;
   private final BinaryContentStorage storage;
+  private final BinaryContentMapper BinaryContentMapper;
 
   @Override
-  public BinaryContentDTO create(MultipartFile file) {
+  public BinaryContentDTO createBinaryContentFromFile(MultipartFile file) {
     if (file == null || file.isEmpty()) {
       throw new IllegalArgumentException("파일이 비어있습니다.");
     }
-    BinaryContent saved = repository.save(BinaryContent.builder()
+    BinaryContent saved = binaryContentRepository.save(BinaryContent.builder()
         .name(file.getOriginalFilename())
         .size(file.getSize())
         .contentType(file.getContentType() == null ? "application/octet-stream" : file.getContentType())
         .build());
 
     try {
-      storage.put(saved.getId(), file.getBytes());
+      storage.putFile(saved.getId(), file.getBytes(), file.getOriginalFilename());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -47,29 +49,29 @@ public class BinaryContentServiceImpl implements BinaryContentService {
   }
 
   @Override
-  public BinaryContentDTO create(BinaryContentCreateRequest request) {
+  public BinaryContentDTO createBinaryContentFromRequest(BinaryContentCreateRequest request) {
     if (request == null || request.bytes() == null) {
       throw new IllegalArgumentException("요청 바이트가 비어있습니다.");
     }
-    BinaryContent saved = repository.save(BinaryContent.builder()
+    BinaryContent saved = binaryContentRepository.save(BinaryContent.builder()
         .name(request.fileName())
         .size((long) request.bytes().length)
         .contentType(request.contentType() == null ? "application/octet-stream" : request.contentType())
         .build());
-    storage.put(saved.getId(), request.bytes());
+    storage.putFile(saved.getId(), request.bytes(), request.fileName() == null ? "알 수 없음" : request.fileName());
     return BinaryContentMapper.toDTO(saved);
   }
 
   @Override
-  public BinaryContentDTO get(Long id) {
-    BinaryContent entity = repository.findById(id)
+  public BinaryContentDTO getBinaryContent(Long id) {
+    BinaryContent entity = binaryContentRepository.findById(id)
         .orElseThrow(() -> new NoSuchElementException("파일 메타데이터를 찾을 수 없습니다. id=" + id));
     return BinaryContentMapper.toDTO(entity);
   }
 
   @Override
-  public List<BinaryContentDTO> list(int size, Long idAfter) {
-    List<BinaryContent> all = repository.findAll();
+  public List<BinaryContentDTO> getBinaryContentList(int size, Long idAfter) {
+    List<BinaryContent> all = binaryContentRepository.findAll();
     return all.stream()
         .sorted(Comparator.comparing(BinaryContent::getId))
         .filter(e -> idAfter == null || e.getId() > idAfter)
@@ -79,8 +81,8 @@ public class BinaryContentServiceImpl implements BinaryContentService {
   }
 
   @Override
-  public BinaryContentDTO update(Long id, BinaryContentUpdateRequest request) {
-    BinaryContent entity = repository.findById(id)
+  public BinaryContentDTO updateBinaryContent(Long id, BinaryContentUpdateRequest request) {
+    BinaryContent entity = binaryContentRepository.findById(id)
         .orElseThrow(() -> new NoSuchElementException("파일 메타데이터를 찾을 수 없습니다. id=" + id));
 
     if (request.name() != null && !request.name().isBlank()) {
@@ -90,21 +92,21 @@ public class BinaryContentServiceImpl implements BinaryContentService {
           .size(entity.getSize())
           .contentType(entity.getContentType())
           .build();
-      entity = repository.save(entity);
+      entity = binaryContentRepository.save(entity);
     }
     return BinaryContentMapper.toDTO(entity);
   }
 
   @Override
-  public void delete(Long id) {
-    repository.findById(id).orElseThrow(() -> new NoSuchElementException("파일 메타데이터를 찾을 수 없습니다. id=" + id));
-    storage.delete(id);
-    repository.deleteById(id);
+  public void deleteBinaryContent(Long id) {
+    binaryContentRepository.findById(id).orElseThrow(() -> new NoSuchElementException("파일 메타데이터를 찾을 수 없습니다. id=" + id));
+    storage.deleteFile(id);
+    binaryContentRepository.deleteById(id);
   }
 
   @Override
-  public ResponseEntity<Resource> download(Long id) {
-    BinaryContentDTO dto = get(id);
-    return storage.download(dto);
+  public ResponseEntity<Resource> downloadBinaryContent(Long id) {
+    BinaryContentDTO dto = getBinaryContent(id);
+    return storage.downloadFile(dto);
   }
 }
