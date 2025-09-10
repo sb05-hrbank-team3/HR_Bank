@@ -1,6 +1,5 @@
 package com.codeit.hrbank.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,6 +57,5 @@ public class Employee {
 
   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "department_id", nullable = false)
-  @JsonIgnore
   private Department department;
 }
