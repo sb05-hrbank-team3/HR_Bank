@@ -8,7 +8,6 @@ import com.codeit.hrbank.entity.EmployeeStatus;
 import com.codeit.hrbank.service.EmployeeService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
@@ -57,10 +56,8 @@ public class EmployeeController {
       @RequestParam(required = false) String employeeNumber,
       @RequestParam(required = false) String departmentName,
       @RequestParam(required = false) String position,
-      @RequestParam(required = false)
-      @DateTimeFormat(iso = ISO.DATE) LocalDate hireDateFrom,
-      @RequestParam(required = false)
-      @DateTimeFormat(iso = ISO.DATE) LocalDate hireDateTo,
+      @RequestParam(required = false) LocalDate hireDateFrom,
+      @RequestParam(required = false) LocalDate hireDateTo,
       @RequestParam(required = false) EmployeeStatus status,
       @RequestParam(required = false) Long idAfter,
       @RequestParam(required = false) String cursor,    // 일단 보류 cursor
@@ -69,11 +66,9 @@ public class EmployeeController {
       @RequestParam(required = false, defaultValue = "asc") String sortDirection
   ) {
     // Swagger 이상꼼수 별 문제없으면 이렇게 진행
-    Instant hireFrom = hireDateFrom != null ? hireDateFrom.atStartOfDay(ZoneId.systemDefault()).toInstant() : null;
-    Instant hireTo = hireDateTo != null ? hireDateTo.atStartOfDay(ZoneId.systemDefault()).toInstant() : null;
 
     CursorPageResponse<EmployeeDTO> response = employeeService.findAllByPart(
-        nameOrEmail, employeeNumber, departmentName, position, hireFrom, hireTo, status,
+        nameOrEmail, employeeNumber, departmentName, position, hireDateFrom, hireDateTo, status,
         idAfter, size, sortField, sortDirection);
 
     return ResponseEntity.ok(response);

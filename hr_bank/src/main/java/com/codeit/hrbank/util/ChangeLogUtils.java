@@ -2,13 +2,13 @@ package com.codeit.hrbank.util;
 
 import com.codeit.hrbank.entity.ChangeLog;
 import com.codeit.hrbank.entity.ChangeLogType;
-import com.codeit.hrbank.entity.History;
 import com.codeit.hrbank.entity.Employee;
-import java.time.Instant;
+import com.codeit.hrbank.entity.History;
+import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.lang.reflect.Field;
 
 public class ChangeLogUtils {
 
@@ -17,7 +17,7 @@ public class ChangeLogUtils {
                 .type(type)
                 .ipAddress(ipAddress)
                 .memo(memo != null ? memo : "")
-                .at(Instant.now())
+                .at(LocalDate.now())
                 .employee(employee)
                 .build();
     }

@@ -5,7 +5,7 @@ import com.codeit.hrbank.dto.request.EmployeeCreateRequest;
 import com.codeit.hrbank.dto.request.EmployeeUpdateRequest;
 import com.codeit.hrbank.dto.response.CursorPageResponse;
 import com.codeit.hrbank.entity.EmployeeStatus;
-import java.time.Instant;
+import java.time.LocalDate;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface EmployeeService {
@@ -22,8 +22,8 @@ public interface EmployeeService {
         String employeeNumber,
         String departmentName,
         String position,
-        Instant hireDateFrom,
-        Instant hireDateTo,
+        LocalDate hireDateFrom,
+        LocalDate hireDateTo,
         EmployeeStatus status,
         Long idAfter,
         Integer size,

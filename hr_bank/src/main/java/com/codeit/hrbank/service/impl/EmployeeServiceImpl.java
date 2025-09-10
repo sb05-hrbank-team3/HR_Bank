@@ -23,7 +23,7 @@ import com.codeit.hrbank.storage.BinaryContentStorage;
 import com.codeit.hrbank.util.ChangeLogUtils;
 import jakarta.persistence.EntityManager;
 import java.io.IOException;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -78,7 +78,7 @@ public class EmployeeServiceImpl implements EmployeeService {
       }
     }
 
-    Instant hireDate = request.hireDate().atStartOfDay(ZoneId.systemDefault()).toInstant();
+    LocalDate hireDate = request.hireDate().atStartOfDay(ZoneId.systemDefault()).toLocalDate();
     Employee employee = Employee.builder()
         .name(request.name())
         .email(request.email())
@@ -183,7 +183,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   @Override
   @Transactional(readOnly = true)
   public CursorPageResponse<EmployeeDTO> findAllByPart(String nameOrEmail, String employeeNumber,
-      String departmentName, String position, Instant hireDateFrom, Instant hireDateTo,
+      String departmentName, String position, LocalDate hireDateFrom, LocalDate hireDateTo,
       EmployeeStatus status, Long idAfter, Integer size, String sortField, String sortDirection) {
 
     List<Employee> employees = employeeRepository.findAllQEmployeesPart(

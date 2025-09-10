@@ -13,7 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.time.Instant;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,7 +43,7 @@ public class Employee {
   private String employeeNumber;
 
   @Column(name = "hire_date", nullable = false)
-  private Instant hireDate;
+  private LocalDate hireDate;
 
   @Column(nullable = false, length = 30)
   private String position;

@@ -12,7 +12,7 @@ import com.codeit.hrbank.service.BackupService;
 import com.codeit.hrbank.service.csv.CsvExportService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -63,7 +63,7 @@ public class BackupServiceImpl implements BackupService {
       ip = ip.split(",")[0].trim();
     }
 
-    Instant requestTime = Instant.now();
+    LocalDate requestTime = LocalDate.now();
 
     List<Backup> backups = backupRepository.findAll();
 
@@ -73,7 +73,7 @@ public class BackupServiceImpl implements BackupService {
       Backup backup = backupRepository.save(Backup.builder()
           .worker(ip)
           .startedAt(requestTime)
-          .endedAt(Instant.now())
+          .endedAt(LocalDate.now())
           .status(BackupStatus.COMPLETED)
           .file(bc)
           .build()
@@ -88,7 +88,7 @@ public class BackupServiceImpl implements BackupService {
       Backup backup = backupRepository.save(Backup.builder()
           .worker(ip)
           .startedAt(requestTime)
-          .endedAt(Instant.now())
+          .endedAt(LocalDate.now())
           .status(BackupStatus.FAILED)
           .build()
       );
@@ -101,7 +101,7 @@ public class BackupServiceImpl implements BackupService {
       Backup backup = backupRepository.save(Backup.builder()
           .worker(ip)
           .startedAt(requestTime)
-          .endedAt(Instant.now())
+          .endedAt(LocalDate.now())
           .status(BackupStatus.SKIPPED)
           .build()
       );
@@ -115,7 +115,7 @@ public class BackupServiceImpl implements BackupService {
       Backup backup = backupRepository.save(Backup.builder()
           .worker(ip)
           .startedAt(requestTime)
-          .endedAt(Instant.now())
+          .endedAt(LocalDate.now())
           .status(BackupStatus.COMPLETED)
           .file(bc)
           .build()

@@ -1,7 +1,7 @@
 package com.codeit.hrbank.dto.data;
 
 import com.codeit.hrbank.entity.EmployeeStatus;
-import java.time.Instant;
+import java.time.LocalDate;
 import lombok.Builder;
 
 @Builder
@@ -11,7 +11,7 @@ public record EmployeeDTO(
     String email,
     String employeeNumber,
     String position,
-    Instant hireDate,
+    LocalDate hireDate,
     EmployeeStatus status,
     Long profileImageId,
     Long departmentId,

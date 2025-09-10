@@ -4,7 +4,7 @@ CREATE TABLE departments
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(20) NOT NULL,
     description VARCHAR(100) NOT NULL,
-    established_date TIMESTAMP WITH TIME ZONE NOT NULL
+    established_date DATE NOT NULL
 );
 
 -- 파일
@@ -23,7 +23,7 @@ CREATE TABLE employees
     email VARCHAR(100) NOT NULL UNIQUE,
     name VARCHAR(20) NOT NULL,
     employee_number VARCHAR(100) NOT NULL UNIQUE,
-    hire_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    hire_date DATE NOT NULL,
     position VARCHAR(30) NOT NULL,
     status VARCHAR(20) NOT NULL,
     binary_content_id BIGINT,
@@ -43,7 +43,7 @@ CREATE TABLE change_logs
     type VARCHAR(20) NOT NULL,
     ip_address VARCHAR(100) NOT NULL,
     memo VARCHAR(100) NOT NULL,
-    at TIMESTAMP WITH TIME ZONE NOT NULL,
+    at DATE NOT NULL,
     employee_id BIGINT NOT NULL,
     CONSTRAINT fk_changelog_employee
         FOREIGN KEY (employee_id) REFERENCES employees (id)
@@ -68,14 +68,15 @@ CREATE TABLE backups
 (
     id BIGSERIAL PRIMARY KEY,
     worker VARCHAR(20) NOT NULL,
-    started_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    ended_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    started_at DATE NOT NULL,
+    ended_at DATE NOT NULL,
     status VARCHAR(20) NOT NULL,
     binary_content_id BIGINT NOT NULL,
     CONSTRAINT fk_backup_file
         FOREIGN KEY (binary_content_id) REFERENCES binary_contents (id)
             ON DELETE CASCADE ON UPDATE CASCADE
 );
+
 
 -- 1. 부서 (20개)
 INSERT INTO departments (id, name, description, established_date)
