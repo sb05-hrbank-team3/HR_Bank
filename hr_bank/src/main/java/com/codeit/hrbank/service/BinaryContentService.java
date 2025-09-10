@@ -5,22 +5,23 @@ import com.codeit.hrbank.dto.request.BinaryContentCreateRequest;
 import com.codeit.hrbank.dto.request.BinaryContentUpdateRequest;
 import java.util.List;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface BinaryContentService {
 
-  BinaryContentDTO create(MultipartFile file);
+  BinaryContentDTO createBinaryContentFromFile(MultipartFile file);
 
-  BinaryContentDTO create(BinaryContentCreateRequest request);
+  BinaryContentDTO createBinaryContentFromRequest(BinaryContentCreateRequest request);
 
-  BinaryContentDTO get(Long id);
+  BinaryContentDTO getBinaryContent(Long id);
 
-  List<BinaryContentDTO> list(int size, Long idAfter);
+  List<BinaryContentDTO> getBinaryContentList(int size, Long idAfter);
 
-  BinaryContentDTO update(Long id, BinaryContentUpdateRequest request);
+  BinaryContentDTO updateBinaryContent(Long id, BinaryContentUpdateRequest request);
 
-  void delete(Long id);
+  void deleteBinaryContent(Long id);
 
-  ResponseEntity<Resource> download(Long id);
+  ResponseEntity<Resource> downloadBinaryContent(Long id);
 }
