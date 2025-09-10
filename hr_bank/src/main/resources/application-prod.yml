@@ -34,3 +34,12 @@ hrbank:
     type: local
     local:
       root-path: ./storage
+  backup:
+    cron: "0 0 * * * *"
+    worker: "system"
+
+
+
+batch:  #batch 파일 저장 경로
+  file:
+    output-path: /backup/output/employee_data.csv

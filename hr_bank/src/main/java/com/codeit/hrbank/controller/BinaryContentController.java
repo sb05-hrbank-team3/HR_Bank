@@ -19,35 +19,35 @@ public class BinaryContentController {
   private final BinaryContentService binaryContentService;
 
   @PostMapping(consumes = {"multipart/form-data"})
-  public BinaryContentDTO upload(@RequestPart("file") MultipartFile file) {
-    BinaryContentDTO dto = binaryContentService.create(file);
+  public BinaryContentDTO uploadFile(@RequestPart("file") MultipartFile file) {
+    BinaryContentDTO dto = binaryContentService.createBinaryContentFromFile(file);
     return dto;
   }
 
   @GetMapping("/{id}")
-  public BinaryContentDTO get(@PathVariable Long id) {
-    return binaryContentService.get(id);
+  public BinaryContentDTO findFile(@PathVariable Long id) {
+    return binaryContentService.getBinaryContent(id);
   }
 
   @GetMapping
-  public List<BinaryContentDTO> list(@RequestParam(defaultValue = "10") int size,
+  public List<BinaryContentDTO> findFiles(@RequestParam(defaultValue = "10") int size,
       @RequestParam(required = false) Long idAfter) {
-    return binaryContentService.list(size, idAfter);
+    return binaryContentService.getBinaryContentList(size, idAfter);
   }
 
   @PatchMapping("/{id}")
-  public BinaryContentDTO updateName(@PathVariable Long id,
+  public BinaryContentDTO updateFileName(@PathVariable Long id,
       @RequestBody BinaryContentUpdateRequest request) {
-    return binaryContentService.update(id, request);
+    return binaryContentService.updateBinaryContent(id, request);
   }
 
   @DeleteMapping("/{id}")
-  public void delete(@PathVariable Long id) {
-    binaryContentService.delete(id);
+  public void deleteFile(@PathVariable Long id) {
+    binaryContentService.deleteBinaryContent(id);
   }
 
   @GetMapping("/{id}/download")
-  public ResponseEntity<Resource> download(@PathVariable Long id) {
-    return binaryContentService.download(id);
+  public ResponseEntity<Resource> downloadFile(@PathVariable Long id) {
+    return binaryContentService.downloadBinaryContent(id);
   }
 }
