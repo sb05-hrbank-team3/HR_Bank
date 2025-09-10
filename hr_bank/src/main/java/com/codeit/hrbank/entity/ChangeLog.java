@@ -49,8 +49,4 @@ public class ChangeLog {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "employee_id", nullable = false)
   private Employee employee;
-
-  @OneToMany(mappedBy = "changeLogs", fetch = FetchType.LAZY)
-  @Builder.Default
-  private List<History> histories = new ArrayList<>();
 }
