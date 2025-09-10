@@ -4,7 +4,7 @@ import com.codeit.hrbank.entity.Backup;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface BackupRepository extends JpaRepository<Backup, Long> {
+public interface BackupRepository extends JpaRepository<Backup, Long> , BackupQueryRepository {
 
 
 }

@@ -4,13 +4,15 @@ import com.codeit.hrbank.dto.data.BackupDTO;
 import com.codeit.hrbank.entity.BackupStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 
 public interface BackupService {
-  //  List<BackupDTO> findAllBackups();
+
+  List<BackupDTO> findAllBackups();
 
 
   BackupDTO createBackup(HttpServletRequest request) throws IOException;
 
 
-//  BackupDTO findLatestBackup(HttpServletRequest request , BackupStatus status);
+  BackupDTO findLatestBackup(BackupStatus status);
 }

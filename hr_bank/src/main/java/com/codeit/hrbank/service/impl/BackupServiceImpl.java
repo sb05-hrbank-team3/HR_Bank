@@ -13,13 +13,19 @@ import com.codeit.hrbank.service.csv.CsvExportService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BackupServiceImpl implements BackupService {
 
   private final BackupRepository backupRepository;
@@ -28,8 +34,19 @@ public class BackupServiceImpl implements BackupService {
   private final CsvExportService csvExportService;
 
 
+  @Override
+  public List<BackupDTO> findAllBackups() {
+    List<BackupDTO> backupDTOS = Optional.ofNullable(backupRepository.findAll())
+        .orElse(Collections.emptyList())   // null이면 빈 리스트
+        .stream()
+        .map(backupMapper::toDto)
+        .toList();
+
+
+    return backupDTOS;
+  }
+
   public BackupDTO createBackup(HttpServletRequest request) throws IOException {
-    ChangeLog changeLog = changeLogRepository.findChangeLog();
     //IP 확인하는 부분
     String ip = request.getHeader("X-Forwarded-For");
     if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
@@ -48,6 +65,25 @@ public class BackupServiceImpl implements BackupService {
 
     Instant requestTime = Instant.now();
 
+    List<Backup> backups = backupRepository.findAll();
+
+    if(backups.isEmpty()) {
+      BinaryContent bc = csvExportService.exportEmployeesToCsv();
+
+      Backup backup = backupRepository.save(Backup.builder()
+          .worker(ip)
+          .startedAt(requestTime)
+          .endedAt(Instant.now())
+          .status(BackupStatus.COMPLETED)
+          .file(bc)
+          .build()
+      );
+      return backupMapper.toDto(backup);
+    }
+
+
+    ChangeLog changeLog = changeLogRepository.findChangeLog();
+
     if (changeLog == null) {
       Backup backup = backupRepository.save(Backup.builder()
           .worker(ip)
@@ -59,6 +95,7 @@ public class BackupServiceImpl implements BackupService {
 
       return backupMapper.toDto(backup);
     }
+
 
     if (changeLog.getAt().isBefore(requestTime)) {
       Backup backup = backupRepository.save(Backup.builder()
@@ -89,11 +126,12 @@ public class BackupServiceImpl implements BackupService {
     return new BackupDTO(null, null, null, null, null, null);
   }
 
-  ;
 
-//  BackupDTO findLatestBackup(HttpServletRequest request , BackupStatus status){
-//
-//
-//  };
+
+  public BackupDTO findLatestBackup(BackupStatus status){
+    BackupDTO backupDTO = backupMapper.toDto(backupRepository.getBackupLatest(status));
+
+    return backupDTO;
+  };
 
 }
