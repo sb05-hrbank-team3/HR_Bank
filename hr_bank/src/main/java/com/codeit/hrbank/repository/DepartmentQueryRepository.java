@@ -1,20 +1,19 @@
 package com.codeit.hrbank.repository;
 
 import com.codeit.hrbank.entity.Department;
-import com.codeit.hrbank.entity.QDepartment;
-import jakarta.annotation.PostConstruct;
-import java.time.Instant;
 import java.util.List;
-import org.springframework.stereotype.Repository;
+import java.util.Map;
 
 
 public interface DepartmentQueryRepository {
   List<Department> findAndSortDepartments(String nameOrDescription,
-      Instant cursor,
+      String cursor,
       Long idAfter,
       int size,
       String sortField,
       String sortDirection);
+
+  Map<Long, Long> findEmployeeCountsByDepartmentIds(List<Long> deptIds);
 
 
 }
