@@ -1,4 +1,4 @@
-package com.codeit.hrbank.dto.data;
+package com.codeit.hrbank.dto.response;
 
 import java.util.List;
 import lombok.Builder;
