@@ -6,8 +6,6 @@ import com.codeit.hrbank.entity.QDepartment;
 import com.codeit.hrbank.repository.DepartmentQueryRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
-import java.time.Instant;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -21,12 +19,12 @@ public class DepartmentQueryRepositoryImpl implements DepartmentQueryRepository 
 
 
   @Override
-  public List<Department> findAndSortDepartments(String nameOrDescription, Instant cursor, Long idAfter,int size,
+  public List<Department> findAndSortDepartments(String nameOrDescription, String cursor,
+      Long idAfter, int size,
       String sortField, String sortDirection) {
-        BooleanBuilder where = new BooleanBuilder();
+    BooleanBuilder where = new BooleanBuilder();
 
-
-    if(nameOrDescription != null && !nameOrDescription.isBlank()){
+    if (nameOrDescription != null && !nameOrDescription.isBlank()) {
       where.and(department.name.containsIgnoreCase(nameOrDescription)
           .or(department.description.containsIgnoreCase(nameOrDescription)));
     }
@@ -36,7 +34,7 @@ public class DepartmentQueryRepositoryImpl implements DepartmentQueryRepository 
       where.and(department.id.gt(idAfter));
     }
 
-    if (sortField.equals("name") &&  sortDirection.equals("asc")) {
+    if (sortField.equals("name") && sortDirection.equals("asc")) {
       return queryFactory
           .select(department)
           .from(department)
@@ -46,7 +44,7 @@ public class DepartmentQueryRepositoryImpl implements DepartmentQueryRepository 
           .fetch();
     }
 
-    if (sortField.equals("name") &&  sortDirection.equals("desc")) {
+    if (sortField.equals("name") && sortDirection.equals("desc")) {
       return queryFactory
           .select(department)
           .from(department)
@@ -56,7 +54,7 @@ public class DepartmentQueryRepositoryImpl implements DepartmentQueryRepository 
           .fetch();
     }
 
-    if (sortField.equals("establishedDate") &&  sortDirection.equals("desc")) {
+    if (sortField.equals("establishedDate") && sortDirection.equals("desc")) {
       return queryFactory
           .select(department)
           .from(department)
