@@ -40,10 +40,11 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     }
   }
 
-  public Long put(Long binaryContentId, byte[] bytes) {
-    Path filePath = resolvePath(binaryContentId);
+  @Override
+  public Long putFile(Long binaryContentId, byte[] bytes, String fileName) {
+    Path filePath = resolvePath(binaryContentId, fileName);
     if (Files.exists(filePath)) {
-      throw new IllegalArgumentException("File with key " + binaryContentId + " already exists");
+      throw new IllegalArgumentException("key가" + binaryContentId + "인 파일이 이미 존재합니다.");
     }
     try (OutputStream outputStream = Files.newOutputStream(filePath)) {
       outputStream.write(bytes);
@@ -53,10 +54,11 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     return binaryContentId;
   }
 
-  public InputStream get(Long binaryContentId) {
-    Path filePath = resolvePath(binaryContentId);
-    if (Files.notExists(filePath)) {
-      throw new NoSuchElementException("File with key " + binaryContentId + " does not exist");
+  @Override
+  public InputStream getFile(Long binaryContentId) {
+    Path filePath = findFileById(binaryContentId);
+    if (filePath == null || Files.notExists(filePath)) {
+      throw new NoSuchElementException("key가" + binaryContentId + "인 파일이 존재하지 않습니다.");
     }
     try {
       return Files.newInputStream(filePath);
@@ -66,13 +68,26 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     }
   }
 
-  private Path resolvePath(Long key) {
-    return root.resolve(key.toString());
+  private Path resolvePath(Long key, String fileName) {
+
+    return root.resolve(key.toString() + "_" + fileName);
+  }
+
+  private Path findFileById(Long key) {
+
+    try {
+      return Files.list(root)
+          .filter(p -> p.getFileName().toString().startsWith(key.toString() + "_"))
+          .findFirst()
+          .orElse(null);
+    } catch (IOException e) {
+      throw new RuntimeException("key에 해당하는 파일 찾기 실패: " + key, e);
+    }
   }
 
   @Override
-  public ResponseEntity<Resource> download(BinaryContentDTO metaData) {
-    InputStream inputStream = get(metaData.id());
+  public ResponseEntity<Resource> downloadFile(BinaryContentDTO metaData) {
+    InputStream inputStream = getFile(metaData.id());
     Resource resource = new InputStreamResource(inputStream);
 
     return ResponseEntity.status(HttpStatus.OK)
@@ -82,9 +97,9 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
   }
 
   @Override
-  public void delete(Long id) {
-    Path filePath = resolvePath(id);
-    if (Files.exists(filePath)) {
+  public void deleteFile(Long id) {
+    Path filePath = findFileById(id);
+    if (filePath != null && Files.exists(filePath)) {
       try {
         Files.delete(filePath);
       } catch (IOException e) {
@@ -92,7 +107,7 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
         throw new RuntimeException(e);
       }
     } else {
-      throw new NoSuchElementException("File with key " + id + " does not exist");
+      throw new NoSuchElementException("key가" + id + "인 파일이 존재하지 않습니다.");
     }
   }
 }
