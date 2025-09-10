@@ -18,12 +18,12 @@ public interface PageResponseMapper {
             .build();
     }
 
-    default <T> CursorPageResponse<T> fromCursor(List<T> content, int size, String nextCursor) {
-        boolean hasNext = content.size() == size; // 요청한 size만큼 조회되면 다음 페이지 존재 추정
+    default <T> CursorPageResponse<T> fromCursor(List<T> content, int size, String nextCursor, Long nextIdAfter,boolean hasNext) {
         return CursorPageResponse.<T>builder()
             .content(content)
             .nextCursor(nextCursor)
             .size(size)
+            .nextIdAfter(nextIdAfter)
             .hasNext(hasNext)
             .build();
     }

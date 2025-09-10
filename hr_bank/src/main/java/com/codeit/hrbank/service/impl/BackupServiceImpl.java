@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
-
 @Service
 @RequiredArgsConstructor
 public class BackupServiceImpl implements BackupService {
@@ -30,7 +29,7 @@ public class BackupServiceImpl implements BackupService {
 
 
   public BackupDTO createBackup(HttpServletRequest request) throws IOException {
-    ChangeLog changeLog=changeLogRepository.findChangeLog();
+    ChangeLog changeLog = changeLogRepository.findChangeLog();
     //IP 확인하는 부분
     String ip = request.getHeader("X-Forwarded-For");
     if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
@@ -46,11 +45,11 @@ public class BackupServiceImpl implements BackupService {
     if (ip != null && ip.contains(",")) {
       ip = ip.split(",")[0].trim();
     }
-    
-    Instant requestTime=Instant.now();
 
-    if(changeLog==null){
-      Backup backup=backupRepository.save( Backup.builder()
+    Instant requestTime = Instant.now();
+
+    if (changeLog == null) {
+      Backup backup = backupRepository.save(Backup.builder()
           .worker(ip)
           .startedAt(requestTime)
           .endedAt(Instant.now())
@@ -61,8 +60,8 @@ public class BackupServiceImpl implements BackupService {
       return backupMapper.toDto(backup);
     }
 
-    if(changeLog.getAt().isBefore(requestTime)){
-      Backup backup=backupRepository.save( Backup.builder()
+    if (changeLog.getAt().isBefore(requestTime)) {
+      Backup backup = backupRepository.save(Backup.builder()
           .worker(ip)
           .startedAt(requestTime)
           .endedAt(Instant.now())
@@ -73,11 +72,10 @@ public class BackupServiceImpl implements BackupService {
       return backupMapper.toDto(backup);
     }
 
+    if (changeLog.getAt().isAfter(requestTime)) {
+      BinaryContent bc = csvExportService.exportEmployeesToCsv();
 
-    if(changeLog.getAt().isAfter(requestTime)){
-      BinaryContent bc=csvExportService.exportEmployeesToCsv();
-
-      Backup backup=backupRepository.save( Backup.builder()
+      Backup backup = backupRepository.save(Backup.builder()
           .worker(ip)
           .startedAt(requestTime)
           .endedAt(Instant.now())
@@ -88,9 +86,10 @@ public class BackupServiceImpl implements BackupService {
       return backupMapper.toDto(backup);
     }
 
-    return new BackupDTO(null,null,null,null,null,null);
-  };
+    return new BackupDTO(null, null, null, null, null, null);
+  }
 
+  ;
 
 //  BackupDTO findLatestBackup(HttpServletRequest request , BackupStatus status){
 //
