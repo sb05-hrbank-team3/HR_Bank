@@ -10,11 +10,12 @@ public record EmployeeDTO(
     String name,
     String email,
     String employeeNumber,
-    Instant hireDate,
     String position,
+    Instant hireDate,
     EmployeeStatus status,
-    BinaryContentDTO binaryContent,
-    DepartmentDTO department
+    Long profileImageId,
+    Long departmentId,
+    String departmentName
 ) {
 
 }

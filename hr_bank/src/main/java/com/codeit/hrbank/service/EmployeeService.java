@@ -1,12 +1,11 @@
 package com.codeit.hrbank.service;
 
-import com.codeit.hrbank.dto.response.CursorPageResponse;
 import com.codeit.hrbank.dto.data.EmployeeDTO;
 import com.codeit.hrbank.dto.request.EmployeeCreateRequest;
 import com.codeit.hrbank.dto.request.EmployeeUpdateRequest;
+import com.codeit.hrbank.dto.response.CursorPageResponse;
 import com.codeit.hrbank.entity.EmployeeStatus;
 import java.time.Instant;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface EmployeeService {
@@ -26,6 +25,10 @@ public interface EmployeeService {
         Instant hireDateFrom,
         Instant hireDateTo,
         EmployeeStatus status,
-        Pageable pageable);
+        Long idAfter,
+        Integer size,
+        String sortField,
+        String sortDirection
+    );
 
 }
