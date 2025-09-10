@@ -1,19 +1,15 @@
 package com.codeit.hrbank.repository.impl;
 
-import com.codeit.hrbank.dto.data.BinaryContentDTO;
-import com.codeit.hrbank.dto.data.DepartmentDTO;
-import com.codeit.hrbank.dto.data.EmployeeDTO;
+import static com.codeit.hrbank.entity.QEmployee.employee;
+
+import com.codeit.hrbank.entity.Employee;
 import com.codeit.hrbank.entity.EmployeeStatus;
-import com.codeit.hrbank.entity.QBinaryContent;
-import com.codeit.hrbank.entity.QDepartment;
-import com.codeit.hrbank.entity.QEmployee;
 import com.codeit.hrbank.repository.EmployeeQueryRepository;
-import com.querydsl.core.types.Projections;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.Instant;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -22,12 +18,8 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
 
   private final JPAQueryFactory queryFactory;
 
-  private static final QEmployee e = QEmployee.employee;
-  private static final QDepartment d = QDepartment.department;
-  private static final QBinaryContent b = QBinaryContent.binaryContent;
-
   @Override
-  public List<EmployeeDTO> findAllQEmployeesPart(
+  public List<Employee> findAllQEmployeesPart(
       String nameOrEmail,
       String employeeNumber,
       String departmentName,
@@ -35,68 +27,53 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
       Instant hireDateFrom,
       Instant hireDateTo,
       EmployeeStatus status,
-      Pageable pageable) {
+      Long idAfter,
+      Integer size,
+      String sortField,
+      String sortDirection
+  ) {
+    BooleanBuilder where = new BooleanBuilder();
 
-    var query = queryFactory
-        .select(Projections.constructor(EmployeeDTO.class,
-            e.id,
-            e.name,
-            e.email,
-            e.employeeNumber,
-            e.hireDate,
-            e.position,
-            e.status,
-            Projections.constructor(BinaryContentDTO.class,
-                e.binaryContent.id,
-                e.binaryContent.name,
-                e.binaryContent.size,
-                e.binaryContent.contentType
-            ),
-            Projections.constructor(DepartmentDTO.class,
-                e.department.id,
-                e.department.name,
-                e.department.description,
-                e.department.establishedDate
-            )
-        ))
-        .from(e)
-        .leftJoin(e.department, d)
-        .leftJoin(e.binaryContent, b);
-
-    // 조건 추가
-    if (nameOrEmail != null && !nameOrEmail.isEmpty()) {
-      query.where(e.name.containsIgnoreCase(nameOrEmail)
-          .or(e.email.containsIgnoreCase(nameOrEmail)));
+    if (nameOrEmail != null && !nameOrEmail.isBlank()) {
+      where.and(employee.name.containsIgnoreCase(nameOrEmail)
+          .or(employee.email.containsIgnoreCase(nameOrEmail)));
     }
-
-    if (employeeNumber != null && !employeeNumber.isEmpty()) {
-      query.where(e.employeeNumber.eq(employeeNumber));
+    if (employeeNumber != null && !employeeNumber.isBlank()) {
+      where.and(employee.employeeNumber.containsIgnoreCase(employeeNumber));
     }
-
-    if (departmentName != null && !departmentName.isEmpty()) {
-      query.where(e.department.name.eq(departmentName));
+    if (departmentName != null && !departmentName.isBlank()) {
+      where.and(employee.department.name.containsIgnoreCase(departmentName));
     }
-
-    if (position != null && !position.isEmpty()) {
-      query.where(e.position.eq(position));
+    if (position != null && !position.isBlank()) {
+      where.and(employee.position.containsIgnoreCase(position));
     }
-
     if (hireDateFrom != null) {
-      query.where(e.hireDate.goe(hireDateFrom));
+      where.and(employee.hireDate.goe(hireDateFrom));
     }
-
     if (hireDateTo != null) {
-      query.where(e.hireDate.loe(hireDateTo));
+      where.and(employee.hireDate.loe(hireDateTo));
     }
-
     if (status != null) {
-      query.where(e.status.eq(status));
+      where.and(employee.status.eq(status));
+    }
+    if (idAfter != null) {
+      where.and(employee.id.gt(idAfter));
     }
 
-    // 페이징 적용
-    query.offset(pageable.getOffset())
-        .limit(pageable.getPageSize());
+    // 정렬
+    com.querydsl.core.types.OrderSpecifier<?> order;
+    boolean asc = !"DESC".equalsIgnoreCase(sortDirection);
+    order = switch (sortField) {
+      case "hireDate" -> asc ? employee.hireDate.asc() : employee.hireDate.desc();
+      case "employeeNumber" -> asc ? employee.employeeNumber.asc() : employee.employeeNumber.desc();
+      case "name" -> asc ? employee.name.asc() : employee.name.desc();
+      default -> employee.id.asc();
+    };
 
-    return query.fetch();
+    return queryFactory.selectFrom(employee)
+        .where(where)
+        .orderBy(order)
+        .limit(size)
+        .fetch();
   }
 }
