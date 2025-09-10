@@ -231,8 +231,15 @@ DROP TABLE IF EXISTS departments CASCADE;
 
 CREATE USER hrbank_user WITH PASSWORD 'hrbank_1234';
 GRANT ALL PRIVILEGES ON DATABASE hrbank TO hrbank_user;
--- 모든 테이블 권한
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO hrbank_user;
+-- ROLE이 모든 테이블/시퀀스 권한 가짐
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO hrbank_role;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO hrbank_role;
 
--- 모든 시퀀스 권한
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO hrbank_user;
+-- 앞으로 생성될 테이블/시퀀스도 자동 권한 부여
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO hrbank_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO hrbank_role;
+
+
+GRANT ALL PRIVILEGES ON SCHEMA public TO hrbank_user;
+
+GRANT hrbank_role TO hrbank_user;
