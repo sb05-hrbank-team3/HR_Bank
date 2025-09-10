@@ -60,7 +60,7 @@ public class EmployeeServiceImpl implements EmployeeService {
           .size(profile.getSize()).contentType(profile.getContentType()).build();
       binaryContentRepository.save(binaryContent);
       try {
-        binaryContentStorage.put(binaryContent.getId(), profile.getBytes());
+        binaryContentStorage.putFile(binaryContent.getId(), profile.getBytes(), binaryContent.getName());
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
@@ -108,7 +108,7 @@ public class EmployeeServiceImpl implements EmployeeService {
           .size(profile.getSize()).contentType(profile.getContentType()).build();
       binaryContentRepository.save(binaryContent);
       try {
-        binaryContentStorage.put(binaryContent.getId(), profile.getBytes());
+        binaryContentStorage.putFile(binaryContent.getId(), profile.getBytes(), binaryContent.getName());
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
@@ -141,7 +141,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     employeeRepository.deleteById(employee.getId());
 
     binaryContentRepository.deleteById(employee.getBinaryContent().getId());
-    binaryContentStorage.delete(employee.getBinaryContent().getId());
+    binaryContentStorage.deleteFile(employee.getBinaryContent().getId());
   }
 
   @Override
@@ -156,18 +156,25 @@ public class EmployeeServiceImpl implements EmployeeService {
         hireDateFrom, hireDateTo, status, idAfter, size, sortField, sortDirection
     );
 
+    boolean hasNext = employees.size() > size;
+    if (hasNext) {
+      employees = employees.subList(0, size); // 초과분 잘라내기
+    }
+
     // 2. Entity → DTO 변환
     List<EmployeeDTO> employeeDTOs = employees.stream()
         .map(employeeMapper::toDTO)
         .toList();
 
     // 3. 다음 커서 계산
+    Long nextIdAfter = null;
     String nextCursor = null;
-    if (!employeeDTOs.isEmpty()) {
-      nextCursor = employeeDTOs.get(employeeDTOs.size() - 1).id().toString();
+    if (!employees.isEmpty()) {
+      nextIdAfter = employees.get(employees.size() - 1).getId();
+      nextCursor = String.valueOf(nextIdAfter); // cursor 확장 고려 시 Base64 encode 가능
     }
 
     // 4. CursorPageResponse 생성
-    return pageResponseMapper.fromCursor(employeeDTOs, size, nextCursor);
+    return pageResponseMapper.fromCursor(employeeDTOs, size, nextCursor, nextIdAfter, hasNext);
   }
 }
