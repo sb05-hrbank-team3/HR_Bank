@@ -25,8 +25,7 @@ public class HistoryServiceImpl implements HistoryService {
 
   @Transactional
   @Override
-  public HistoryDTO create(HistoryCreateRequest request) {
-    Long changeLogId = request.changeLogId();
+  public HistoryDTO create(Long changeLogId, HistoryCreateRequest request) {
 
     ChangeLog changeLog = changeLogRepository.findById(changeLogId)
         .orElseThrow(() -> new NoSuchElementException("Change log with id "+ changeLogId+  " not found"));

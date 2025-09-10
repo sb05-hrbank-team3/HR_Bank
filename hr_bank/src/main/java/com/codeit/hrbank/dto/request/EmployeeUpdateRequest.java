@@ -1,12 +1,12 @@
 package com.codeit.hrbank.dto.request;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 public record EmployeeUpdateRequest(
     String name,
     String email,
     Long departmentId,
     String position,
-    Instant hireDate,
+    LocalDate hireDate,
     String memo
 ) { }

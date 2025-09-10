@@ -1,13 +1,16 @@
 package com.codeit.hrbank.mapper;
 import com.codeit.hrbank.entity.BinaryContent;
 import com.codeit.hrbank.dto.data.BinaryContentDTO;
-import com.codeit.hrbank.dto.response.BinaryContentResponse;
-import org.mapstruct.Mapper;
+import com.codeit.hrbank.entity.BinaryContent;
 
 @Mapper(componentModel = "spring")
 public interface BinaryContentMapper {
 
-  BinaryContentDTO toDTO(BinaryContent entity);
-
-  BinaryContentResponse toEntity(BinaryContentDTO dto);
+  public static BinaryContentDTO toDTO(BinaryContent entity) {
+    if (entity == null) {
+      return null;
+    }
+    return new BinaryContentDTO(entity.getId(), entity.getName(), entity.getSize(),
+        entity.getContentType());
+  }
 }
