@@ -133,6 +133,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
+  @Transactional
   public void deleteEmployee(Long employeeId) {
     Employee employee = employeeRepository.findById(employeeId)
         .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
