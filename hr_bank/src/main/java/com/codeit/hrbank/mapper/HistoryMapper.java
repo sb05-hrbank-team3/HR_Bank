@@ -19,6 +19,10 @@ public interface HistoryMapper {
   @Mapping(source = "changeLog", target = "changeLogs")
   History toEntity(HistoryCreateRequest request, ChangeLog changeLog);
 
+  @Mapping(source = "changeLog", target = "changeLogs")
+  @Mapping(target = "id", ignore = true)
+  History toEntity(HistoryDTO dto, ChangeLog changeLog);
+
   @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE) // request가 Null -> 기존 엔티티 값 그대로 유지
   void updateEntityFromRequest(HistoryUpdateRequest request, @MappingTarget History history);
 
