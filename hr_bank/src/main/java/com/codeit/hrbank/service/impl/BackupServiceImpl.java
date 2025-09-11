@@ -121,7 +121,10 @@ public class BackupServiceImpl implements BackupService {
       return backupMapper.toDto(backup);
     }
 
-    if (changeLog.getAt().isAfter(requestTime)) {
+    Instant lastBackup =backupRepository.getBackupLatest(BackupStatus.COMPLETED).getEndedAt();
+
+
+    if (changeLog.getAt().isBefore(lastBackup)) {
       Backup backup = backupRepository.save(Backup.builder()
           .worker(ip)
           .startedAt(requestTime)
@@ -133,7 +136,7 @@ public class BackupServiceImpl implements BackupService {
       return backupMapper.toDto(backup);
     }
 
-    if (changeLog.getAt().isBefore(requestTime)) {
+    if (changeLog.getAt().isAfter(lastBackup)) {
       BinaryContent bc = csvExportService.exportEmployeesToCsv();
 
       Backup backup = backupRepository.save(Backup.builder()
@@ -149,6 +152,7 @@ public class BackupServiceImpl implements BackupService {
 
     return new BackupDTO(null, null, null, null, null, null);
   }
+
 
   //scheduler를 위해 파라미터가 없는 함수 추가
   @Transactional
@@ -190,7 +194,10 @@ public class BackupServiceImpl implements BackupService {
       return backupMapper.toDto(backup);
     }
 
-    if (changeLog.getAt().isAfter(requestTime)) {
+    Instant lastBackup =backupRepository.getBackupLatest(BackupStatus.COMPLETED).getEndedAt();
+
+
+    if (changeLog.getAt().isBefore(lastBackup)) {
       Backup backup = backupRepository.save(Backup.builder()
           .worker(ip)
           .startedAt(requestTime)
@@ -202,7 +209,7 @@ public class BackupServiceImpl implements BackupService {
       return backupMapper.toDto(backup);
     }
 
-    if (changeLog.getAt().isBefore(requestTime)) {
+    if (changeLog.getAt().isAfter(lastBackup)) {
       BinaryContent bc = csvExportService.exportEmployeesToCsv();
 
       Backup backup = backupRepository.save(Backup.builder()

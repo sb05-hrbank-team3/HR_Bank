@@ -5,9 +5,11 @@ import com.codeit.hrbank.dto.request.DepartmentCreateRequest;
 import com.codeit.hrbank.dto.request.DepartmentUpdateRequest;
 import com.codeit.hrbank.dto.response.CursorPageResponse;
 import com.codeit.hrbank.entity.Department;
+import com.codeit.hrbank.entity.Employee;
 import com.codeit.hrbank.mapper.DepartmentMapper;
 import com.codeit.hrbank.mapper.PageResponseMapper;
 import com.codeit.hrbank.repository.DepartmentRepository;
+import com.codeit.hrbank.repository.EmployeeRepository;
 import com.codeit.hrbank.service.DepartmentService;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -26,6 +28,7 @@ public class DepartmentServiceImpl implements DepartmentService {
   private final DepartmentRepository departmentRepository;
   private final PageResponseMapper pageResponseMapper;
   private final DepartmentMapper departmentMapper;
+  private final EmployeeRepository employeeRepository;
 
 
   @Override
@@ -95,9 +98,22 @@ public class DepartmentServiceImpl implements DepartmentService {
   }
 
   @Override
-  public void deleteById(Long id) {
+  public void deleteById(Long id) throws IllegalStateException {
     Department department = departmentRepository
         .findById(id).orElseThrow(() -> new NoSuchElementException("삭제 대상 부서가 없습니다: " + id));
+
+    List<Employee> employees= employeeRepository.findAll();
+
+    boolean exists = employees.stream()
+        .anyMatch(e -> e.getDepartment().getId().equals(id));
+
+    if (exists) {
+      throw new IllegalStateException(
+          "소속된 직원이 1명 이상이면 삭제가 불가능합니다: " + id
+      );
+    }
+
+
     departmentRepository.deleteById(id);
 
   }
