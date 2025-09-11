@@ -1,13 +1,16 @@
 package com.codeit.hrbank.controller;
 
 import com.codeit.hrbank.dto.data.ChangeLogDTO;
-import com.codeit.hrbank.dto.request.ChangeLogSearchRequest;
 import com.codeit.hrbank.dto.response.CursorPageResponse;
+import com.codeit.hrbank.entity.ChangeLogType;
 import com.codeit.hrbank.service.ChangeLogService;
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,9 +21,20 @@ public class ChangeLogController {
 
   @GetMapping
   public ResponseEntity<CursorPageResponse<ChangeLogDTO>> listChangeLog(
-      ChangeLogSearchRequest request
+      @RequestParam(required = false) String employeeNumber,
+      @RequestParam(required = false) String memo,
+      @RequestParam(required = false) String ipAddress,
+      @RequestParam(required = false) ChangeLogType type,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant atFrom,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant atTo,
+      @RequestParam(required = false) Long idAfter,
+      @RequestParam(required = false) String cursor,
+      @RequestParam(defaultValue = "10") int size,
+      @RequestParam(defaultValue = "at") String sortField,
+      @RequestParam(defaultValue = "desc") String sortDirection
   ) {
-    CursorPageResponse<ChangeLogDTO> response = changeLogService.searchChangeLogs(request);
+    CursorPageResponse<ChangeLogDTO> response = changeLogService.searchChangeLogs(
+        employeeNumber, memo, ipAddress, type, atFrom, atTo, idAfter, cursor, size, sortField, sortDirection);
     return ResponseEntity.ok(response);
   }
 
