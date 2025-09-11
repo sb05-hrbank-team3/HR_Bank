@@ -31,4 +31,5 @@ public interface EmployeeService {
         String sortDirection
     );
 
+    Long countEmployees(EmployeeStatus status, LocalDate hireDateFrom, LocalDate hireDateTo);
 }
