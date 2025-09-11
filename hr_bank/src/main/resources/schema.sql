@@ -43,7 +43,7 @@ CREATE TABLE change_logs
     type VARCHAR(20) NOT NULL,
     ip_address VARCHAR(100) NOT NULL,
     memo VARCHAR(100) NOT NULL,
-    at DATE NOT NULL,
+    at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     employee_id BIGINT NOT NULL,
     CONSTRAINT fk_changelog_employee
         FOREIGN KEY (employee_id) REFERENCES employees (id)
@@ -68,8 +68,8 @@ CREATE TABLE backups
 (
     id BIGSERIAL PRIMARY KEY,
     worker VARCHAR(20) NOT NULL,
-    started_at DATE NOT NULL,
-    ended_at DATE NOT NULL,
+    started_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    ended_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     status VARCHAR(20) NOT NULL,
     binary_content_id BIGINT NOT NULL,
     CONSTRAINT fk_backup_file
@@ -229,6 +229,7 @@ DROP TABLE IF EXISTS backups CASCADE;
 DROP TABLE IF EXISTS employees CASCADE;
 DROP TABLE IF EXISTS binary_contents CASCADE;
 DROP TABLE IF EXISTS departments CASCADE;
+
 
 CREATE USER hrbank_user WITH PASSWORD 'hrbank_1234';
 GRANT ALL PRIVILEGES ON DATABASE hrbank TO hrbank_user;
