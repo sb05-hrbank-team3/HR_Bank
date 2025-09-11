@@ -13,7 +13,7 @@ public interface BackupQueryRepository {
       BackupStatus status,
       Instant startedAtFrom,
       Instant startedAtTo,
-      int idAfter,
+      Long idAfter,
       String cursor,
       int size,
       String sortField,

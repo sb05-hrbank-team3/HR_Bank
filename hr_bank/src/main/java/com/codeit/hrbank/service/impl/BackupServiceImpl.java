@@ -1,11 +1,13 @@
 package com.codeit.hrbank.service.impl;
 
 import com.codeit.hrbank.dto.data.BackupDTO;
+import com.codeit.hrbank.dto.response.CursorPageResponse;
 import com.codeit.hrbank.entity.Backup;
 import com.codeit.hrbank.entity.BackupStatus;
 import com.codeit.hrbank.entity.BinaryContent;
 import com.codeit.hrbank.entity.ChangeLog;
 import com.codeit.hrbank.mapper.BackupMapper;
+import com.codeit.hrbank.mapper.PageResponseMapper;
 import com.codeit.hrbank.repository.BackupRepository;
 import com.codeit.hrbank.repository.ChangeLogRepository;
 import com.codeit.hrbank.service.BackupService;
@@ -36,18 +38,37 @@ public class BackupServiceImpl implements BackupService {
   private final ChangeLogRepository changeLogRepository;
   private final BackupMapper backupMapper;
   private final CsvExportService csvExportService;
+  private final PageResponseMapper pageResponseMapper;
 
 
   @Override
-  public List<BackupDTO> findAllBackups() {
-    List<BackupDTO> backupDTOS = Optional.ofNullable(backupRepository.findAll())
-        .orElse(Collections.emptyList())   // null이면 빈 리스트
-        .stream()
+  public CursorPageResponse<BackupDTO> findAllBackups(String worker, BackupStatus status,
+      Instant startedAtFrom, Instant startedAtTo
+      , Long idAfter, String cursor, int size, String sortField, String sortDirection) {
+    List<Backup> backups = backupRepository.findAllBackups(worker, status, startedAtFrom,
+        startedAtTo,
+        idAfter, cursor, size, sortField, sortDirection);
+
+    // hasNext 체크
+    boolean hasNext = backups.size() > size;
+    if (hasNext) {
+      backups = backups.subList(0, size);
+    }
+
+    // DTO 변환
+    List<BackupDTO> backupDTOs = backups.stream()
         .map(backupMapper::toDto)
         .toList();
+    // 다음 커서 정보 설정
+    Long nextIdAfter = null;
+    String nextCursor = null;
+    if (!backups.isEmpty()) {
+      nextIdAfter = backups.get(backups.size() - 1).getId();
+      nextCursor = String.valueOf(nextIdAfter);
+    }
 
 
-    return backupDTOS;
+    return pageResponseMapper.fromCursor(backupDTOs, size, nextCursor, nextIdAfter, hasNext);
   }
 
   @Transactional
@@ -72,7 +93,7 @@ public class BackupServiceImpl implements BackupService {
 
     List<Backup> backups = backupRepository.findAll();
 
-    if(backups.isEmpty()) {
+    if (backups.isEmpty()) {
       BinaryContent bc = csvExportService.exportEmployeesToCsv();
 
       Backup backup = backupRepository.save(Backup.builder()
@@ -85,7 +106,6 @@ public class BackupServiceImpl implements BackupService {
       );
       return backupMapper.toDto(backup);
     }
-
 
     ChangeLog changeLog = changeLogRepository.findChangeLog();
 
@@ -100,7 +120,6 @@ public class BackupServiceImpl implements BackupService {
 
       return backupMapper.toDto(backup);
     }
-
 
     if (changeLog.getAt().isAfter(requestTime)) {
       Backup backup = backupRepository.save(Backup.builder()
@@ -143,7 +162,7 @@ public class BackupServiceImpl implements BackupService {
 
     List<Backup> backups = backupRepository.findAll();
 
-    if(backups.isEmpty()) {
+    if (backups.isEmpty()) {
       BinaryContent bc = csvExportService.exportEmployeesToCsv();
 
       Backup backup = backupRepository.save(Backup.builder()
@@ -156,7 +175,6 @@ public class BackupServiceImpl implements BackupService {
       );
       return backupMapper.toDto(backup);
     }
-
 
     ChangeLog changeLog = changeLogRepository.findChangeLog();
 
@@ -171,7 +189,6 @@ public class BackupServiceImpl implements BackupService {
 
       return backupMapper.toDto(backup);
     }
-
 
     if (changeLog.getAt().isAfter(requestTime)) {
       Backup backup = backupRepository.save(Backup.builder()
@@ -203,11 +220,12 @@ public class BackupServiceImpl implements BackupService {
   }
 
 
-
-  public BackupDTO findLatestBackup(BackupStatus status){
+  public BackupDTO findLatestBackup(BackupStatus status) {
     BackupDTO backupDTO = backupMapper.toDto(backupRepository.getBackupLatest(status));
 
     return backupDTO;
-  };
+  }
+
+  ;
 
 }
