@@ -4,11 +4,17 @@ import static com.codeit.hrbank.entity.QEmployee.employee;
 
 import com.codeit.hrbank.entity.Employee;
 import com.codeit.hrbank.entity.EmployeeStatus;
+import com.codeit.hrbank.entity.QEmployee;
 import com.codeit.hrbank.repository.EmployeeQueryRepository;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -76,4 +82,83 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
         .limit(size)
         .fetch();
   }
+
+  @Override
+  public Long countEmployeesByFilters(EmployeeStatus status, LocalDate hireDateFrom, LocalDate hireDateTo) {
+
+    QEmployee employee = QEmployee.employee;
+    BooleanBuilder where = new BooleanBuilder();
+
+    if(status != null){
+      where.and(employee.status.ne(EmployeeStatus.RESIGNED)); // 퇴시자 제외
+    }
+    if(hireDateFrom != null){
+      where.and(employee.hireDate.goe(hireDateFrom));
+    }
+    if(hireDateTo != null){
+      where.and(employee.hireDate.loe(hireDateTo));
+    }
+    return queryFactory
+        .select(employee.count())
+        .from(employee)
+        .where(where)
+        .fetchOne();
+  }
+
+  // 주어진 시점(at)에 재직/휴직 직원 수 카운트 (퇴사자 제외)
+  @Override
+  public Long countEmployeesAt(LocalDate at) {
+    QEmployee employee = QEmployee.employee;
+    return queryFactory
+        .select(employee.count())
+        .from(employee)
+        .where(
+            employee.hireDate.loe(at) // at 시점 이전 입사자
+                .and(employee.status.ne(EmployeeStatus.RESIGNED)) // 퇴사자 제외
+        )
+        .fetchOne();
+  }
+  @Override
+  public Long countEmployeesByStatus(EmployeeStatus status) {
+    QEmployee employee = QEmployee.employee;
+    return queryFactory
+        .select(employee.count())
+        .from(employee)
+        .where(employee.status.eq(status))
+        .fetchOne();
+  }
+
+  @Override
+  public Map<Long, Long> countEmployeesByDepartmentIds(EmployeeStatus status,
+      Set<Long> departmentIds) {
+    if(departmentIds == null || departmentIds.isEmpty()) return Collections.emptyMap();
+
+    QEmployee employee = QEmployee.employee;
+    List<Tuple> rows = queryFactory.select(employee.department.id, employee.count())
+        .from(employee)
+        .where(
+            employee.status.eq(status),
+            employee.department.id.in(departmentIds)
+        )
+        .groupBy(employee.department.id)
+        .fetch();
+
+    return rows.stream().collect(Collectors.toMap(
+        t -> t.get(0, Long.class),
+        t -> t.get(1, Long.class)
+    ));
+  }
+
+  @Override
+  public List<Tuple> countEmployeesGroupByPosition(EmployeeStatus status) {
+    QEmployee employee = QEmployee.employee;
+    return queryFactory
+        .select(employee.position, employee.count())
+        .from(employee)
+        .where(employee.status.eq(status))
+        .groupBy(employee.position)
+        .orderBy(employee.count().desc())
+        .fetch();
+  }
+
 }
