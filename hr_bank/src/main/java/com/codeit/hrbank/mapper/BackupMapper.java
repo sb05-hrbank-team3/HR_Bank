@@ -9,7 +9,10 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface BackupMapper {
 
+
   Backup toEntity(BackupDTO dto);
+
+  @Mapping(target = "fileId", source = "file.id")
   BackupDTO toDto(Backup entity);
 
 

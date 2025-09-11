@@ -97,7 +97,7 @@ public class ChangeLogQueryRepositoryImpl implements ChangeLogQueryRepository {
   @Override
   public ChangeLog findChangeLog() {
     BooleanBuilder where = new BooleanBuilder();
-    where.and( changeLog.memo.containsIgnoreCase("직원") );
+
 
     return queryFactory
         .select(changeLog)

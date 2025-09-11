@@ -2,11 +2,13 @@ package com.codeit.hrbank.controller;
 
 
 import com.codeit.hrbank.dto.data.BackupDTO;
+import com.codeit.hrbank.dto.response.CursorPageResponse;
 import com.codeit.hrbank.entity.BackupStatus;
 import com.codeit.hrbank.service.BackupService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -25,28 +27,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class BackupController {
   private final BackupService backupService;
 
-  @GetMapping("")
-  public ResponseEntity<List<BackupDTO>> findAllBackups(
+  @GetMapping
+  public ResponseEntity<CursorPageResponse<BackupDTO>> findAllBackups(
       @RequestParam(required = false) String worker,
       @RequestParam(required = false) BackupStatus status ,
-      @RequestParam(required = false) LocalDate startedAtFrom,
-      @RequestParam(required = false) LocalDate startedAtTo,
-      @RequestParam(required = false) Integer idAfter,
+      @RequestParam(required = false) Instant startedAtFrom,
+      @RequestParam(required = false) Instant startedAtTo,
+      @RequestParam(required = false) Long idAfter,
       @RequestParam(required = false) String cursor,
       @RequestParam(defaultValue = "10") int size,
       @RequestParam(defaultValue = "startedAt") String sortField,
       @RequestParam(defaultValue = "DESC") String sortDirection
 
       ){
-    List<BackupDTO> backupDTOS= backupService.findAllBackups();
+    CursorPageResponse<BackupDTO> allBackups = backupService.findAllBackups(worker, status,
+        startedAtFrom, startedAtTo
+        , idAfter, cursor, size, sortField, sortDirection);
 
-
-    return ResponseEntity.ok(backupDTOS);
+    return ResponseEntity.ok(allBackups);
   }
 
-
-
-  @PostMapping("")
+  @PostMapping
   public ResponseEntity<BackupDTO> createBackup(HttpServletRequest request) throws IOException {
      BackupDTO backupDto = backupService.createBackup(request);
 
@@ -56,9 +57,8 @@ public class BackupController {
 
   @GetMapping("/latest")
   public ResponseEntity<BackupDTO> findLatestBackup(
-      HttpServletRequest request,
-      @RequestParam(defaultValue = "COMPLETED",required = false)BackupStatus status
-      ) {
+      @RequestParam(defaultValue = "COMPLETED", required = false)BackupStatus status,
+      HttpServletRequest request) {
     BackupDTO backupDto = backupService.findLatestBackup(status);
 
     return ResponseEntity.status(HttpStatus.OK).body(backupDto);

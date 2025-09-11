@@ -25,6 +25,7 @@ public interface PageResponseMapper {
             .size(size)
             .nextIdAfter(nextIdAfter)
             .hasNext(hasNext)
+            .totalElements(content.size())
             .build();
     }
 }
