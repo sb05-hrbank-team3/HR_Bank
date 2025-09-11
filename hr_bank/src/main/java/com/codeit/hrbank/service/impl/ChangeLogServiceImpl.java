@@ -1,19 +1,21 @@
 package com.codeit.hrbank.service.impl;
 
 import com.codeit.hrbank.dto.data.ChangeLogDTO;
+import com.codeit.hrbank.dto.data.HistoryDTO;
 import com.codeit.hrbank.dto.response.CursorPageResponse;
 import com.codeit.hrbank.entity.ChangeLog;
 import com.codeit.hrbank.entity.ChangeLogType;
 import com.codeit.hrbank.mapper.ChangeLogMapper;
 import com.codeit.hrbank.mapper.HistoryMapper;
 import com.codeit.hrbank.repository.ChangeLogRepository;
-import com.codeit.hrbank.repository.EmployeeRepository;
 import com.codeit.hrbank.repository.HistoryRepository;
 import com.codeit.hrbank.service.ChangeLogService;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +23,6 @@ public class ChangeLogServiceImpl implements ChangeLogService {
 
   private final ChangeLogRepository changeLogRepository;
   private final HistoryRepository historyRepository;
-  private final EmployeeRepository employeeRepository;
   private final ChangeLogMapper changeLogMapper;
   private final HistoryMapper historyMapper;
 
@@ -51,5 +52,23 @@ public class ChangeLogServiceImpl implements ChangeLogService {
         .totalElements(totalCount)
         .hasNext(hasNext)
         .build();
+  }
+
+
+  @Transactional(readOnly = true)
+  @Override
+  public List<HistoryDTO> findAllByChangeLogsId(Long logId) {
+    return historyRepository.findAllByChangeLogsId(logId).stream()
+        .map(historyMapper::toDTO)
+        .toList();
+  }
+
+  @Override
+  public Long countChangeLogBetween(Instant fromDate, Instant toDate) {
+    Instant now = Instant.now();
+    Instant from = (fromDate == null) ? now.minus(7, ChronoUnit.DAYS) : fromDate;
+    Instant to = (toDate == null) ? now : toDate;
+
+    return changeLogRepository.countBetween(from, to);
   }
 }
