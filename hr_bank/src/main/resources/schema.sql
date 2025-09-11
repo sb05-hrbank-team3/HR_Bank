@@ -71,7 +71,7 @@ CREATE TABLE backups
     started_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     ended_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     status VARCHAR(20) NOT NULL,
-    binary_content_id BIGINT NOT NULL,
+    binary_content_id BIGINT,
     CONSTRAINT fk_backup_file
         FOREIGN KEY (binary_content_id) REFERENCES binary_contents (id)
             ON DELETE CASCADE ON UPDATE CASCADE
