@@ -11,8 +11,7 @@ public record ChangeLogDTO(
     String employeeNumber,
     String memo,
     String ipAddress,
-    Instant at,
-    List<HistoryDTO> histories
+    Instant at
 ) {
 
 }
