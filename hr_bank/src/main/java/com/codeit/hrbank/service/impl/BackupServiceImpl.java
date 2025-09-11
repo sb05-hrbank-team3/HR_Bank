@@ -12,7 +12,10 @@ import com.codeit.hrbank.service.BackupService;
 import com.codeit.hrbank.service.csv.CsvExportService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -46,6 +50,7 @@ public class BackupServiceImpl implements BackupService {
     return backupDTOS;
   }
 
+  @Transactional
   public BackupDTO createBackup(HttpServletRequest request) throws IOException {
     //IP 확인하는 부분
     String ip = request.getHeader("X-Forwarded-For");
@@ -63,7 +68,7 @@ public class BackupServiceImpl implements BackupService {
       ip = ip.split(",")[0].trim();
     }
 
-    LocalDate requestTime = LocalDate.now();
+    Instant requestTime = Instant.now();
 
     List<Backup> backups = backupRepository.findAll();
 
@@ -73,7 +78,7 @@ public class BackupServiceImpl implements BackupService {
       Backup backup = backupRepository.save(Backup.builder()
           .worker(ip)
           .startedAt(requestTime)
-          .endedAt(LocalDate.now())
+          .endedAt(Instant.now())
           .status(BackupStatus.COMPLETED)
           .file(bc)
           .build()
@@ -88,7 +93,7 @@ public class BackupServiceImpl implements BackupService {
       Backup backup = backupRepository.save(Backup.builder()
           .worker(ip)
           .startedAt(requestTime)
-          .endedAt(LocalDate.now())
+          .endedAt(Instant.now())
           .status(BackupStatus.FAILED)
           .build()
       );
@@ -97,11 +102,11 @@ public class BackupServiceImpl implements BackupService {
     }
 
 
-    if (changeLog.getAt().isBefore(requestTime)) {
+    if (changeLog.getAt().isAfter(requestTime)) {
       Backup backup = backupRepository.save(Backup.builder()
           .worker(ip)
           .startedAt(requestTime)
-          .endedAt(LocalDate.now())
+          .endedAt(Instant.now())
           .status(BackupStatus.SKIPPED)
           .build()
       );
@@ -109,13 +114,84 @@ public class BackupServiceImpl implements BackupService {
       return backupMapper.toDto(backup);
     }
 
-    if (changeLog.getAt().isAfter(requestTime)) {
+    if (changeLog.getAt().isBefore(requestTime)) {
       BinaryContent bc = csvExportService.exportEmployeesToCsv();
 
       Backup backup = backupRepository.save(Backup.builder()
           .worker(ip)
           .startedAt(requestTime)
-          .endedAt(LocalDate.now())
+          .endedAt(Instant.now())
+          .status(BackupStatus.COMPLETED)
+          .file(bc)
+          .build()
+      );
+      return backupMapper.toDto(backup);
+    }
+
+    return new BackupDTO(null, null, null, null, null, null);
+  }
+
+  //scheduler를 위해 파라미터가 없는 함수 추가
+  @Transactional
+  @Override
+  public BackupDTO createBackupForScheduler() throws IOException {
+    //내 컴퓨터의 IP
+    InetAddress localHost = InetAddress.getLocalHost();
+    String ip = localHost.getHostAddress();
+
+    Instant requestTime = Instant.now();
+
+    List<Backup> backups = backupRepository.findAll();
+
+    if(backups.isEmpty()) {
+      BinaryContent bc = csvExportService.exportEmployeesToCsv();
+
+      Backup backup = backupRepository.save(Backup.builder()
+          .worker(ip)
+          .startedAt(requestTime)
+          .endedAt(Instant.now())
+          .status(BackupStatus.COMPLETED)
+          .file(bc)
+          .build()
+      );
+      return backupMapper.toDto(backup);
+    }
+
+
+    ChangeLog changeLog = changeLogRepository.findChangeLog();
+
+    if (changeLog == null) {
+      Backup backup = backupRepository.save(Backup.builder()
+          .worker(ip)
+          .startedAt(requestTime)
+          .endedAt(Instant.now())
+          .status(BackupStatus.FAILED)
+          .build()
+      );
+
+      return backupMapper.toDto(backup);
+    }
+
+
+    if (changeLog.getAt().isAfter(requestTime)) {
+      Backup backup = backupRepository.save(Backup.builder()
+          .worker(ip)
+          .startedAt(requestTime)
+          .endedAt(Instant.now())
+          .status(BackupStatus.SKIPPED)
+          .build()
+      );
+
+      return backupMapper.toDto(backup);
+    }
+
+    if (changeLog.getAt().isBefore(requestTime)) {
+      BinaryContent bc = csvExportService.exportEmployeesToCsv();
+
+      Backup backup = backupRepository.save(Backup.builder()
+          .worker(ip)
+          .startedAt(requestTime)
+          .endedAt(Instant.now())
           .status(BackupStatus.COMPLETED)
           .file(bc)
           .build()

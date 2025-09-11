@@ -13,6 +13,7 @@ public interface BackupService {
 
   BackupDTO createBackup(HttpServletRequest request) throws IOException;
 
+  BackupDTO createBackupForScheduler() throws IOException;
 
   BackupDTO findLatestBackup(BackupStatus status);
 }

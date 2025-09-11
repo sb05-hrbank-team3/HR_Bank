@@ -1,6 +1,7 @@
 package com.codeit.hrbank.dto.data;
 
 import com.codeit.hrbank.entity.BackupStatus;
+import java.time.Instant;
 import java.time.LocalDate;
 import lombok.Builder;
 
@@ -8,8 +9,8 @@ import lombok.Builder;
 public record BackupDTO (
   Long id,
   String worker,
-  LocalDate startedAt,
-  LocalDate endedAt,
+  Instant startedAt,
+  Instant endedAt,
   BackupStatus status,
   Long fileId
 ){ }

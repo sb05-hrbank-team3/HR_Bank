@@ -7,6 +7,7 @@ import com.codeit.hrbank.entity.QBackup;
 import com.codeit.hrbank.repository.BackupQueryRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class BackupQueryRepositoryImpl implements BackupQueryRepository {
 
   @Override
   public List<Backup> findAllBackups(
-      String worker, BackupStatus status, LocalDate startedAtFrom, LocalDate startedAtTo
+      String worker, BackupStatus status, Instant startedAtFrom, Instant startedAtTo
       , int idAfter, String cursor, int size, String sortField, String sortDirection
   ) {
     BooleanBuilder where = new BooleanBuilder();
