@@ -20,4 +20,11 @@ public interface EmployeeQueryRepository {
       String sortDirection
   );
 
+  Long countEmployeesByFilters(
+      EmployeeStatus status,
+      LocalDate hireDateFrom,
+      LocalDate hireDateTo)
+      ;
+
+  Long countEmployeeStatus(LocalDate at);
 }
