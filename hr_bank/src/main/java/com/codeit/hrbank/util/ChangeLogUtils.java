@@ -5,7 +5,7 @@ import com.codeit.hrbank.entity.ChangeLogType;
 import com.codeit.hrbank.entity.Employee;
 import com.codeit.hrbank.entity.History;
 import java.lang.reflect.Field;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +19,7 @@ public class ChangeLogUtils {
                 .type(type)
                 .ipAddress(ipAddress)
                 .memo(memo != null ? memo : "")
-                .at(LocalDate.now())
+                .at(Instant.now())
                 .employee(employee)
                 .build();
     }
