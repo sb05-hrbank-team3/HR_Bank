@@ -9,6 +9,5 @@ import org.mapstruct.Mapping;
 public interface ChangeLogMapper {
 
   @Mapping(target = "employeeNumber", source = "employee.employeeNumber")
-  @Mapping(target = "histories", ignore = true) // 필요하면 별도 매핑 로직 추가
   ChangeLogDTO toDto(ChangeLog changeLog);
 }
