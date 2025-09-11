@@ -54,8 +54,4 @@ public class BinaryContentController {
     binaryContentService.deleteBinaryContent(id);
   }
 
-  @GetMapping("/{id}/download")
-  public ResponseEntity<Resource> downloadFile(@PathVariable Long id) {
-    return binaryContentService.downloadBinaryContent(id);
-  }
 }

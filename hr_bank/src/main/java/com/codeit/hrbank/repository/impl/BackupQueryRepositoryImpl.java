@@ -7,6 +7,7 @@ import com.codeit.hrbank.entity.QBackup;
 import com.codeit.hrbank.repository.BackupQueryRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,92 +22,52 @@ public class BackupQueryRepositoryImpl implements BackupQueryRepository {
 
   @Override
   public List<Backup> findAllBackups(
-      String worker, BackupStatus status, LocalDate startedAtFrom, LocalDate startedAtTo
-      , int idAfter, String cursor, int size, String sortField, String sortDirection
+      String worker,
+      BackupStatus status,
+      Instant startedAtFrom,
+      Instant startedAtTo,
+      Long idAfter,
+      String cursor,
+      int size,
+      String sortField,
+      String sortDirection
   ) {
     BooleanBuilder where = new BooleanBuilder();
 
     if (worker != null && !worker.isBlank()) {
       where.and(backup.worker.containsIgnoreCase(worker));
     }
-
     if (status != null) {
       where.and(backup.status.eq(status));
     }
-
     if (startedAtFrom != null) {
       where.and(backup.startedAt.goe(startedAtFrom));
     }
-
     if (startedAtTo != null) {
       where.and(backup.endedAt.loe(startedAtTo));
     }
-
-    if (sortField.equals("startedAt")) {
-      if (sortDirection.equals("ASC")) {
-        return queryFactory
-            .select(backup)
-            .from(backup)
-            .where(where)
-            .limit(size)
-            .orderBy(backup.startedAt.asc())
-            .fetch();
-      } else if (sortDirection.equals("DESC")) {
-        return queryFactory
-            .select(backup)
-            .from(backup)
-            .where(where)
-            .limit(size)
-            .orderBy(backup.startedAt.desc())
-            .fetch();
-
-      }
+    if (idAfter != null) {
+      where.and(backup.id.gt(idAfter));
     }
 
-    if (sortField.equals("endedAt")) {
-      if (sortDirection.equals("ASC")) {
-        return queryFactory
-            .select(backup)
-            .from(backup)
-            .where(where)
-            .limit(size)
-            .orderBy(backup.endedAt.asc())
-            .fetch();
+    // 정렬 조건
+    boolean asc = !"DESC".equalsIgnoreCase(sortDirection);
+    com.querydsl.core.types.OrderSpecifier<?> order = switch (sortField) {
+      case "startedAt" -> asc ? backup.startedAt.asc() : backup.startedAt.desc();
+      case "endedAt" -> asc ? backup.endedAt.asc() : backup.endedAt.desc();
+      case "status" -> asc ? backup.status.asc() : backup.status.desc();
+      case "worker" -> asc ? backup.worker.asc() : backup.worker.desc();
+      default -> backup.id.asc(); // 기본 정렬
+    };
 
-
-      } else if (sortDirection.equals("DESC")) {
-        return queryFactory
-            .select(backup)
-            .from(backup)
-            .where(where)
-            .limit(size)
-            .orderBy(backup.endedAt.desc())
-            .fetch();
-
-      }
-    }
-
-    if (sortField.equals("status")) {
-      if (sortDirection.equals("ASC")) {
-        return queryFactory
-            .select(backup)
-            .from(backup)
-            .where(where)
-            .limit(size)
-            .orderBy(backup.status.asc())
-            .fetch();
-
-      }
-    }
     return queryFactory
-        .select(backup)
-        .from(backup)
+        .selectFrom(backup)
         .where(where)
-        .limit(size)
-        .orderBy(backup.status.desc())
+        .orderBy(order)
+        .limit(size + 1) // hasNext 판단 위해 +1
         .fetch();
-
   }
+
 
   @Override
   public Backup getBackupLatest(BackupStatus status) {

@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.Instant;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -34,10 +35,10 @@ public class Backup {
   private String worker;
 
   @Column(name = "started_at", nullable = false)
-  private LocalDate startedAt;
+  private Instant startedAt;
 
   @Column(name = "ended_at", nullable = false)
-  private LocalDate endedAt;
+  private Instant endedAt;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
