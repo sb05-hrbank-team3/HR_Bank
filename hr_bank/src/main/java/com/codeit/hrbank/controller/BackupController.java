@@ -30,7 +30,7 @@ public class BackupController {
   @GetMapping
   public ResponseEntity<CursorPageResponse<BackupDTO>> findAllBackups(
       @RequestParam(required = false) String worker,
-      @RequestParam(required = false) String status ,
+      @RequestParam(required = false) BackupStatus status ,
       @RequestParam(required = false) Instant startedAtFrom,
       @RequestParam(required = false) Instant startedAtTo,
       @RequestParam(required = false) Long idAfter,
@@ -40,8 +40,7 @@ public class BackupController {
       @RequestParam(defaultValue = "DESC") String sortDirection
 
       ){
-    BackupStatus backupStatus = BackupStatus.valueOf(status);
-    CursorPageResponse<BackupDTO> allBackups = backupService.findAllBackups(worker, backupStatus,
+    CursorPageResponse<BackupDTO> allBackups = backupService.findAllBackups(worker, status,
         startedAtFrom, startedAtTo
         , idAfter, cursor, size, sortField, sortDirection);
 
@@ -58,10 +57,9 @@ public class BackupController {
 
   @GetMapping("/latest")
   public ResponseEntity<BackupDTO> findLatestBackup(
-      @RequestParam(defaultValue = "COMPLETED", required = false)String status,
+      @RequestParam(defaultValue = "COMPLETED", required = false)BackupStatus status,
       HttpServletRequest request) {
-    BackupStatus backupStatus = BackupStatus.valueOf(status);
-    BackupDTO backupDto = backupService.findLatestBackup(backupStatus);
+    BackupDTO backupDto = backupService.findLatestBackup(status);
 
     return ResponseEntity.status(HttpStatus.OK).body(backupDto);
   }
