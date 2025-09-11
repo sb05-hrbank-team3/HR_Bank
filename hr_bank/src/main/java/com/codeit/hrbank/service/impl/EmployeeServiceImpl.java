@@ -225,4 +225,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     return pageResponseMapper.fromCursor(employeeDTOs, size, nextCursor, nextIdAfter, hasNext);
   }
+
+  @Override
+  public Long countEmployees(EmployeeStatus status, LocalDate hireDateFrom, LocalDate hireDateTo) {
+    return employeeRepository.countEmployeesByFilters(status, hireDateFrom, hireDateTo);
+  }
 }
