@@ -91,4 +91,15 @@ public class EmployeeController {
     employeeService.deleteEmployee(id, clientIp);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).body("삭제 성공");
   }
+
+  @GetMapping("/count")
+  public long countEmployees(
+      @RequestParam(required = false) EmployeeStatus status,
+      @RequestParam(required = false) LocalDate fromDate,
+      @RequestParam(required = false) LocalDate toDate
+  ){
+    return employeeService.countEmployees(status, fromDate, toDate);
+  }
+
+
 }
