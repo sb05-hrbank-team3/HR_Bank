@@ -98,6 +98,8 @@ public class DepartmentServiceImpl implements DepartmentService {
   public void deleteById(Long id) {
     Department department = departmentRepository
         .findById(id).orElseThrow(() -> new NoSuchElementException("삭제 대상 부서가 없습니다: " + id));
+
+
     departmentRepository.deleteById(id);
 
   }
