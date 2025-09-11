@@ -221,11 +221,9 @@ public class BackupServiceImpl implements BackupService {
 
 
   public BackupDTO findLatestBackup(BackupStatus status) {
-    BackupDTO backupDTO = backupMapper.toDto(backupRepository.getBackupLatest(status));
+    Backup backupLatest = backupRepository.getBackupLatest(status);
 
-    return backupDTO;
+    return backupMapper.toDto(backupLatest);
   }
-
-  ;
 
 }
