@@ -1,18 +1,21 @@
 package com.codeit.hrbank.controller;
 
 import com.codeit.hrbank.dto.data.EmployeeDTO;
+import com.codeit.hrbank.dto.data.EmployeeDistributionDTO;
+import com.codeit.hrbank.dto.data.EmployeeTrendDTO;
 import com.codeit.hrbank.dto.request.EmployeeCreateRequest;
 import com.codeit.hrbank.dto.request.EmployeeUpdateRequest;
 import com.codeit.hrbank.dto.response.CursorPageResponse;
+import com.codeit.hrbank.entity.EmployeeGroupBy;
 import com.codeit.hrbank.entity.EmployeeStatus;
+import com.codeit.hrbank.service.EmployeeAnalyticsService;
 import com.codeit.hrbank.service.EmployeeService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class EmployeeController {
 
   private final EmployeeService employeeService;
+  private final EmployeeAnalyticsService employeeAnalyticsService;
 
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<EmployeeDTO> createEmployee(@RequestPart EmployeeCreateRequest employee,
@@ -93,12 +98,39 @@ public class EmployeeController {
   }
 
   @GetMapping("/count")
-  public long countEmployees(
+  public ResponseEntity<Long> countEmployees(
       @RequestParam(required = false) EmployeeStatus status,
       @RequestParam(required = false) LocalDate fromDate,
       @RequestParam(required = false) LocalDate toDate
   ){
-    return employeeService.countEmployees(status, fromDate, toDate);
+    Long count = employeeService.countEmployees(status, fromDate, toDate);
+    return ResponseEntity.ok(count);
+  }
+
+  @GetMapping("/stats/trend")
+  public ResponseEntity<List<EmployeeTrendDTO>> trend(
+      @RequestParam(required = false) LocalDate from,
+      @RequestParam(required = false) LocalDate to,
+      @RequestParam(required = false, defaultValue = "month") String unit
+  ){
+    List<EmployeeTrendDTO> trend = employeeAnalyticsService.getTrend(from, to, unit,
+        ZoneId.systemDefault());
+    return ResponseEntity.ok(trend);
+  }
+
+
+  @GetMapping("/stats/distribution")
+  public ResponseEntity<List<EmployeeDistributionDTO>> distribution(
+      @RequestParam(required = false, defaultValue = "department") String groupBy,
+      @RequestParam(required = false, defaultValue = "ACTIVE")EmployeeStatus status
+  ){
+    try {
+      return ResponseEntity.ok(employeeAnalyticsService.getDistribution(EmployeeGroupBy.fromString(groupBy), status));
+    } catch (IllegalArgumentException ex) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
+
+
   }
 
 
