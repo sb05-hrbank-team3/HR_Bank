@@ -4,6 +4,7 @@ import static com.codeit.hrbank.entity.QEmployee.employee;
 
 import com.codeit.hrbank.entity.Employee;
 import com.codeit.hrbank.entity.EmployeeStatus;
+import com.codeit.hrbank.entity.QEmployee;
 import com.codeit.hrbank.repository.EmployeeQueryRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -76,4 +77,40 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
         .limit(size)
         .fetch();
   }
+
+  @Override
+  public Long countEmployeesByFilters(EmployeeStatus status, LocalDate hireDateFrom, LocalDate hireDateTo) {
+
+    QEmployee employee = QEmployee.employee;
+    BooleanBuilder where = new BooleanBuilder();
+
+    if(status != null){
+      where.and(employee.status.ne(EmployeeStatus.RESIGNED)); // 퇴시자 제외
+    }
+    if(hireDateFrom != null){
+      where.and(employee.hireDate.goe(hireDateFrom));
+    }
+    if(hireDateTo != null){
+      where.and(employee.hireDate.loe(hireDateTo));
+    }
+    return queryFactory
+        .select(employee.count())
+        .from(employee)
+        .where(where)
+        .fetchOne();
+  }
+
+  @Override
+  public Long countEmployeeStatus(LocalDate at) {
+    QEmployee employee = QEmployee.employee;
+    return queryFactory
+        .select(employee.count())
+        .from(employee)
+        .where(
+            employee.hireDate.loe(at) // at 시점 이전 입사자
+                .and(employee.status.ne(EmployeeStatus.RESIGNED)) // 퇴사자 제외
+        )
+        .fetchOne();
+  }
+
 }
