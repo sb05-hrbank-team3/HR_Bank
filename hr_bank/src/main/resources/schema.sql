@@ -231,6 +231,14 @@ DROP TABLE IF EXISTS binary_contents CASCADE;
 DROP TABLE IF EXISTS departments CASCADE;
 
 
+-- 전체 데이터 삭제
+TRUNCATE TABLE histories CASCADE;
+TRUNCATE TABLE change_logs CASCADE;
+TRUNCATE TABLE backups CASCADE;
+TRUNCATE TABLE employees CASCADE;
+TRUNCATE TABLE binary_contents CASCADE;
+TRUNCATE TABLE departments CASCADE;
+
 CREATE USER hrbank_user WITH PASSWORD 'hrbank_1234';
 GRANT ALL PRIVILEGES ON DATABASE hrbank TO hrbank_user;
 -- ROLE이 모든 테이블/시퀀스 권한 가짐
