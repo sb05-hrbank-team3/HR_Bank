@@ -67,7 +67,7 @@ public class DepartmentController {
 
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteById(@PathVariable Long id) {
+  public ResponseEntity<?> deleteById(@PathVariable Long id) throws  IllegalStateException {
     departmentService.deleteById(id);
     return ResponseEntity.ok("부서가 삭제되었습니다.");
 
