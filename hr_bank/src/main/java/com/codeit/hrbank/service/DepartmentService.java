@@ -20,7 +20,7 @@ public interface DepartmentService {
 
   Optional<DepartmentDTO> findById(Long id);
 
-  void deleteById(Long id);
+  void deleteById(Long id) throws IllegalStateException;
 
   DepartmentDTO update(Long id, DepartmentUpdateRequest request);
 
