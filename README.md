@@ -1,6 +1,6 @@
-# {팀 이름}
+# {팀이름}
 
-[팀 협업 문서 링크](#)
+notion [팀 협업 문서 링크](https://www.notion.so/2680fa6d0dae80f3b316ceff3494cfe2)
 
 ## 팀원 구성
 | 이름  | 역할          | 설명                                             | GitHub 주소                              |
