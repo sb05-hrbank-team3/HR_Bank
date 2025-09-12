@@ -1,17 +1,31 @@
 spring:
   profiles:
-    active: prod
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-    open-in-view: false
+    active: dev
   batch:
     job:
       enabled: false
 
+  # Batch 초기화 스크립트 생략
+    jdbc:
+      initialize-schema: never
+
+# 로깅
 logging:
   level:
     org.springframework: INFO
+    org.hibernate.SQL: WARN
+
+# HRBank 커스텀 설정
+hrbank:
+  storage:
+    type: local
+    local:
+      root-path: ./storage
+  backup:
+    cron: "0 0 * * * *"
+    worker: "system"
+
+# Batch 파일 경로
+batch:
+  file:
+    output-path: /backup/output/employee_data.csv

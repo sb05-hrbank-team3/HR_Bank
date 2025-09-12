@@ -1,70 +1,56 @@
-# HR_Bank
+# {팀이름}
+
+![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white) [팀 협업 문서 링크](https://www.notion.so/2680fa6d0dae80f3b316ceff3494cfe2)
+
+## 팀원 구성
+| 이름  | 역할          | 설명                                             | GitHub 주소                              |
+| --- | ----------- | ---------------------------------------------- | -------------------------------------- |
+| 남현수 | (팀장) 백엔드 개발자     | 직원 관리 시스템 엔티티 설계 및 구현, CI/CD 파이프라인 구축, 환경변수 관리 | [GitHub](https://github.com/Namsoo315) |
+| 류승민 | 백엔드 개발자     | 부서 관리 및 데이터 백업 시스템 개발, Batch 처리 및 스케줄링 담당      | [GitHub](https://github.com/bustam00)  |
+| 박종현 | 백엔드 개발자     | 수정 로그 시스템 개발, ERD 설계 및 코드 리팩터링                 | [GitHub](https://github.com/yeahlimm)  |
+| 이예림 | 백엔드/프론트 개발자 | 프론트엔드와 수정 상세 내역 조회 기능 개발, PPT 및 작업 흐름도 제작      | [GitHub](https://github.com/Namsoo315) |
+| 민재영 | 백엔드/프론트 개발자 | 프론트엔드 및 데이터 백업 기능 개발, 파일 스토리지 설정 및 관리          | [GitHub](https://github.com/jymin0)    |
+
+
+---
+
+## 프로젝트 소개
+### HR_Bank
 Batch로 데이터를 관리하는 Open EMS
 
 > 🏢 기업의 핵심 자산, 인적 자원을 체계적으로 관리하세요!
 HR Bank는 인사 데이터를 안전하고 효율적으로 관리할 수 있도록 설계된 Open EMS(Enterprise Management System)입니다. 대량의 데이터를 안정적으로 처리할 수 있는 Batch 시스템을 기반으로 부서 및 직원 정보를 체계적으로 운영할 수 있으며, 백업 자동화, 이력 관리, 대시보드 제공을 통해 기업 인사 관리를 더욱 효과적으로 지원합니다. 📊💼
 
+- **프로젝트 기간:** 2025.09.05 ~ 2025.09.16
+
 ---
-## 📦 Dependencies
-
-### ✅ Spring Boot Starters
-
-* `spring-boot-starter-web` : REST API 및 웹 애플리케이션 개발
-* `spring-boot-starter-data-jpa` : JPA 기반 ORM (Hibernate 포함)
-* `spring-boot-starter-batch` : Spring Batch 배치 처리
-* `spring-boot-starter-test` : 통합 테스트 및 단위 테스트 지원
-* `spring-batch-test` : 배치 테스트 유틸리티
-
-### ✅ 데이터베이스
-
-* `org.postgresql:postgresql` : PostgreSQL 데이터베이스 드라이버
-* `com.h2database:h2` : 인메모리 H2 데이터베이스 (테스트용)
-
-### ✅ 개발 편의성
-
-* `spring-boot-devtools` : 핫 리로드 및 개발 환경 편의 기능
-* `lombok` : 보일러플레이트 코드 제거 (Getter/Setter, Builder 등)
-
-### ✅ API 문서화
-
-* `springdoc-openapi-starter-webmvc-ui:2.8.9` : OpenAPI 3.0(Swagger UI) 지원
-
-### ✅ 매핑/변환
-
-* `mapstruct` : DTO ↔ Entity 매핑 자동화 라이브러리
-
-
-### ✅ 테스트 도구
-
-* `junit-platform-launcher` : JUnit 실행 런처 (테스트 런타임 전용)
-
-
-# {팀 이름}
-
-[팀 협업 문서 링크](#)
-
-## 팀원 구성
-| 이름   | 역할          | 설명                                        | GitHub 주소 |
-|--------|---------------|-------------------------------------------|-------------|
-| 웨인   | 백엔드 개발자 | 소셜 로그인, 회원 추가 정보 입력 API 구현    | [GitHub](#) |
-| 제이든 | 백엔드 개발자 | 회원별 권한 관리, 반응형 레이아웃 API 구현 | [GitHub](#) |
-| 마크   | 백엔드 개발자 | 수강생 정보 관리 API, 공용 Button API 구현 | [GitHub](#) |
-| 데이지 | 백엔드 개발자 | 관리자 API, CRUD 기능, 회원관리 슬라이더 구현 | [GitHub](#) |
-| 제이   | 백엔드 개발자 | 학생 시간 정보 관리, 수정/탈퇴 API, 공용 Modal API 구현 | [GitHub](#) |
-
-
-## 프로젝트 소개
-프로그래밍 교육 사이트의 Spring 백엔드 시스템 구축  
-
-- **프로젝트 기간:** 2024.08.13 ~ 2024.09.03  
-
 ### 기술 스택
-- **Backend:** Spring Boot, Spring Security, Spring Data JPA  
-- **Database:** MySQL  
-- **공통 Tool:** Git & GitHub, Discord  
+### Frontend
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 
+#### Backend  
+![Spring Boot](https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![MapStruct](https://img.shields.io/badge/MapStruct-000000?style=for-the-badge&logo=mapstruct&logoColor=white)
+![Spring Data JPA](https://img.shields.io/badge/JPA-59666C?style=for-the-badge&logo=hibernate&logoColor=white)
+
+#### Database  
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![H2](https://img.shields.io/badge/H2-004088?style=for-the-badge&logo=h2&logoColor=white)
+
+#### CI/CD  
+![Railway](https://img.shields.io/badge/Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white)
+
+#### 협업 Tool  
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white)
+![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)
+
+---
 ## 팀원별 구현 기능 상세
 
+## 예시
 ### 웨인
 (자신이 개발한 기능에 대한 사진이나 gif 파일 첨부)
 
@@ -75,50 +61,11 @@ HR Bank는 인사 데이터를 안전하고 효율적으로 관리할 수 있도
 - **회원 추가 정보 입력 API**  
   회원 유형(관리자, 학생)에 따른 조건부 입력 처리 API 구현  
 
-### 제이든
-(자신이 개발한 기능에 대한 사진이나 gif 파일 첨부)
-
-- **회원별 권한 관리**  
-  Spring Security를 활용하여 사용자 역할에 따른 권한 설정  
-  관리자 페이지와 일반 사용자 페이지를 위한 조건부 라우팅 처리  
-
-- **반응형 레이아웃 API**  
-  클라이언트에서 요청된 반응형 레이아웃을 위한 RESTful API 엔드포인트 구현  
-
-### 마크
-(자신이 개발한 기능에 대한 사진이나 gif 파일 첨부)
-
-- **수강생 정보 관리 API**  
-  GET 요청을 사용하여 학생의 수강 정보를 조회하는 API 엔드포인트 개발  
-  학생 정보의 CRUD 처리 (Spring Data JPA 사용)  
-
-- **공용 Button API**  
-  공통으로 사용할 버튼 기능을 처리하는 API 엔드포인트 구현  
-
-### 데이지
-(자신이 개발한 기능에 대한 사진이나 gif 파일 첨부)
-
-- **관리자 API**  
-  @PathVariable을 사용한 동적 라우팅 기능 구현  
-  PATCH, DELETE 요청을 사용하여 학생 정보를 수정하고 탈퇴하는 API 엔드포인트 개발  
-
-- **CRUD 기능**  
-  학생 정보의 CRUD 기능을 제공하는 API 구현 (Spring Data JPA)  
-
-- **회원관리 슬라이더**  
-  학생별 정보 목록을 Carousel 형식으로 조회하는 API 구현  
-
-### 제이
-(자신이 개발한 기능에 대한 사진이나 gif 파일 첨부)
-
-- **학생 시간 정보 관리 API**  
-  학생별 시간 정보를 GET 요청을 사용하여 조회하는 API 구현  
-  실시간 접속 현황을 관리하는 API 엔드포인트  
-
-- **수정 및 탈퇴 API**  
-  PATCH, DELETE 요청을 사용하여 수강생의 개인정보 수정 및 탈퇴 처리  
-
-- **공용 Modal API**  
-  공통 Modal 컴포넌트를 처리하는 API 구현  
-
 ## 파일 구조
+
+
+## 구현 홈페이지
+[https://www.codeit.kr/](https://www.codeit.kr/)
+
+## 프로젝트 회고록
+(제작한 발표자료 링크 혹은 첨부파일)
