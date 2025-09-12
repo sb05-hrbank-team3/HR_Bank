@@ -20,7 +20,7 @@ public class ChangeLogUtils {
                 .ipAddress(ipAddress)
                 .memo(memo != null ? memo : "")
                 .at(Instant.now())
-                .employee(employee)
+                .employeeNumber(employee.getEmployeeNumber())
                 .build();
     }
 

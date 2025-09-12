@@ -8,6 +8,5 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ChangeLogMapper {
 
-  @Mapping(target = "employeeNumber", source = "employee.employeeNumber")
   ChangeLogDTO toDto(ChangeLog changeLog);
 }
