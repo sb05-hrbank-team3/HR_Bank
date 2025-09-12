@@ -2,17 +2,17 @@ spring:
   application:
     name: hrbank
 
+  # DataSource (Railway ENV 기반)
   datasource:
-    url: jdbc:postgresql://localhost:5432/hrbank
-    username: hrbank_user
-    password: hrbank_1234
+    url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
     driver-class-name: org.postgresql.Driver
-  # JPA
+
+  # JPA 설정
   jpa:
     hibernate:
-      ddl-auto: validate
-      # create, create-drop, update, *validate, none
-#    show-sql: false
+      ddl-auto: update                       # 배포 시 엔티티 기준 테이블 자동 생성
     show-sql: true
     properties:
       hibernate:
@@ -24,22 +24,4 @@ spring:
         jdbc.time_zone: UTC
     open-in-view: false
 
-logging:  # logging 처리
-  level:
-    org.springframework: INFO
-    org.hibernate.SQL: WARN
 
-hrbank:
-  storage:
-    type: local
-    local:
-      root-path: ./storage
-  backup:
-    cron: "0 0 * * * *"   # 매시 07분
-    worker: "system"
-
-
-
-batch:  #batch 파일 저장 경로
-  file:
-    output-path: /backup/output/employee_data.csv
