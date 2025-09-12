@@ -50,16 +50,58 @@ HR Bank는 인사 데이터를 안전하고 효율적으로 관리할 수 있도
 ---
 ## 팀원별 구현 기능 상세
 
-## 예시
-### 웨인
-(자신이 개발한 기능에 대한 사진이나 gif 파일 첨부)
+## 박 종현
+## 페이지네이션 구현 (ChangeLog)
 
-- **소셜 로그인 API**  
-  Google OAuth 2.0을 활용한 소셜 로그인 기능 구현  
-  로그인 후 추가 정보 입력을 위한 RESTful API 엔드포인트 개발  
+### 상황
 
-- **회원 추가 정보 입력 API**  
-  회원 유형(관리자, 학생)에 따른 조건부 입력 처리 API 구현  
+- 대량 데이터에서도 안정적인 페이지네이션 정렬 필요.
+
+### 문제
+
+- 페이지네이션을 사용하지 않으면 전체 쿼리를 항상 구해와 성능적으로 떨어짐
+- ChangeLog, Histories같은 데이터는 많이 쌓이므로 페이지별로 구해오는 과정이 필요함.
+
+### 행동
+
+- Service
+    - Repository의 검색 결과를 size + 1로 조회, hasNext 판별 후 자르기
+    - 마지막 요소의 `id` 다음 커서로 사용: `nextCursor = {"id": <lastId>}` 문자열 생성
+
+```java
+@Override
+  public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
+      String employeeNumber, String memo, String ipAddress, ChangeLogType type, Instant atFrom, Instant atTo, Long idAfter,
+      String cursor, int size, String sortField, String sortDirection) {
+
+    List<ChangeLog> changeLogs = changeLogRepository.searchChangeLogs(
+        employeeNumber, memo, ipAddress, type, atFrom, atTo, idAfter, size + 1, sortField, sortDirection);
+    boolean hasNext = changeLogs.size() > size;
+    if(hasNext) changeLogs = changeLogs.subList(0, size);
+
+    List<ChangeLogDTO> dtos = changeLogs.stream()
+        .map(changeLogMapper::toDto)
+        .toList();
+
+    Long nextIdAfter = hasNext ? dtos.get(dtos.size() - 1).id() : null;
+    long totalCount = changeLogRepository.countChangeLogs(employeeNumber, memo, ipAddress, type, atFrom, atTo);
+
+    return CursorPageResponse.<ChangeLogDTO>builder()
+        .content(dtos)
+        .nextCursor(nextIdAfter != null ? ("{\\"id\\":" + nextIdAfter + "}") : null)
+        .nextIdAfter(nextIdAfter)
+        .size(size)
+        .totalElements(totalCount)
+        .hasNext(hasNext)
+        .build();
+  }
+
+```
+
+### 결과
+
+- 운영자가 원하는 조건으로 안정적인 이력 조회 가능.
+- 커서 방식으로 스크롤형 페이지네이션 시 응답 안정성 확보.
 
 ## 파일 구조
 ```
