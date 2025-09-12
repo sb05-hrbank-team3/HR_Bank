@@ -6,7 +6,6 @@ import com.codeit.hrbank.entity.BackupStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.Instant;
-import java.util.List;
 
 public interface BackupService {
 
@@ -17,7 +16,7 @@ public interface BackupService {
 
   BackupDTO createBackup(HttpServletRequest request) throws IOException;
 
-  BackupDTO createBackupForScheduler() throws IOException;
+  void createBackupForScheduler() throws IOException;
 
   BackupDTO findLatestBackup(BackupStatus status);
 }

@@ -16,13 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,9 +39,9 @@ public class BackupServiceImpl implements BackupService {
   public CursorPageResponse<BackupDTO> findAllBackups(String worker, BackupStatus status,
       Instant startedAtFrom, Instant startedAtTo
       , Long idAfter, String cursor, int size, String sortField, String sortDirection) {
+
     List<Backup> backups = backupRepository.findAllBackups(worker, status, startedAtFrom,
-        startedAtTo,
-        idAfter, cursor, size, sortField, sortDirection);
+        startedAtTo, idAfter, cursor, size, sortField, sortDirection);
 
     // hasNext 체크
     boolean hasNext = backups.size() > size;
@@ -73,6 +67,7 @@ public class BackupServiceImpl implements BackupService {
 
   @Transactional
   public BackupDTO createBackup(HttpServletRequest request) throws IOException {
+
     //IP 확인하는 부분
     String ip = request.getHeader("X-Forwarded-For");
     if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
@@ -157,7 +152,7 @@ public class BackupServiceImpl implements BackupService {
   //scheduler를 위해 파라미터가 없는 함수 추가
   @Transactional
   @Override
-  public BackupDTO createBackupForScheduler() throws IOException {
+  public void createBackupForScheduler() throws IOException {
     //내 컴퓨터의 IP
     InetAddress localHost = InetAddress.getLocalHost();
     String ip = localHost.getHostAddress();
@@ -177,7 +172,8 @@ public class BackupServiceImpl implements BackupService {
           .file(bc)
           .build()
       );
-      return backupMapper.toDto(backup);
+      backupMapper.toDto(backup);
+      return;
     }
 
     ChangeLog changeLog = changeLogRepository.findChangeLog();
@@ -191,7 +187,8 @@ public class BackupServiceImpl implements BackupService {
           .build()
       );
 
-      return backupMapper.toDto(backup);
+      backupMapper.toDto(backup);
+      return;
     }
 
     Instant lastBackup =backupRepository.getBackupLatest(BackupStatus.COMPLETED).getEndedAt();
@@ -206,7 +203,8 @@ public class BackupServiceImpl implements BackupService {
           .build()
       );
 
-      return backupMapper.toDto(backup);
+      backupMapper.toDto(backup);
+      return;
     }
 
     if (changeLog.getAt().isAfter(lastBackup)) {
@@ -220,10 +218,11 @@ public class BackupServiceImpl implements BackupService {
           .file(bc)
           .build()
       );
-      return backupMapper.toDto(backup);
+      backupMapper.toDto(backup);
+      return;
     }
 
-    return new BackupDTO(null, null, null, null, null, null);
+    new BackupDTO(null, null, null, null, null, null);
   }
 
 

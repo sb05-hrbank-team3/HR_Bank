@@ -8,7 +8,6 @@ import com.codeit.hrbank.repository.BackupQueryRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Repository;
 public class BackupQueryRepositoryImpl implements BackupQueryRepository {
 
   private final JPAQueryFactory queryFactory;
-  private static QBackup backup = QBackup.backup;
+  private static final QBackup backup = QBackup.backup;
 
   @Override
   public List<Backup> findAllBackups(

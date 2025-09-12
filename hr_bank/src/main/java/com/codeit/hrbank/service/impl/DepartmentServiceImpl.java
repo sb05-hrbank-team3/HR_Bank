@@ -78,6 +78,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         .map(d -> DepartmentDTO.builder()
             .id(d.getId())
             .name(d.getName())
+            .establishedDate(d.getEstablishedDate())
             .description(d.getDescription())
             .employeeCount(employeeCounts.getOrDefault(d.getId(), 0L)) // null이면 0으로
             .build())
