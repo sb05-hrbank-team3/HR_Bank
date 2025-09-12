@@ -147,7 +147,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     Employee updatedEmployee = employee.toBuilder()
         .name(request.name() != null ? request.name() : employee.getName())
         .email(request.email() != null ? request.email() : employee.getEmail())
-        .department(department)
+        .department(department != null ? department : employee.getDepartment())
+        .status(request.status() != null ? request.status() : employee.getStatus())
         .position(request.position() != null ? request.position() : employee.getPosition())
         .binaryContent(binaryContent != null ? binaryContent : employee.getBinaryContent())
         .build();
