@@ -2,7 +2,9 @@ package com.codeit.hrbank.repository;
 
 
 import com.codeit.hrbank.entity.Employee;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long>, EmployeeQueryRepository {
 
@@ -10,5 +12,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, Emplo
 
   boolean existsByEmailAndIdNot(String email, Long id);
 
+  @Query("select e from Employee e join fetch e.department where e.id = :id")
+  Optional<Employee> findByIdWithDepartment(Long id);
 }
 
