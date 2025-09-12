@@ -180,7 +180,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   @Override
   @Transactional
   public Employee deleteEmployeeDoSaveLog(Long employeeId, String ipAddress){
-    Employee employee = employeeRepository.findByIdWithDepartment(employeeId)
+    Employee employee = employeeRepository.findByIdWithRelations(employeeId)
         .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
 
     ChangeLog changeLog = ChangeLogUtils.createChangeLog(ChangeLogType.DELETED, ipAddress, null, employee);

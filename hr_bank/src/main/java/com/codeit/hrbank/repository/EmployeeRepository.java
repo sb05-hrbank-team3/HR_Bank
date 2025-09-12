@@ -12,7 +12,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, Emplo
 
   boolean existsByEmailAndIdNot(String email, Long id);
 
-  @Query("select e from Employee e join fetch e.department where e.id = :id")
-  Optional<Employee> findByIdWithDepartment(Long id);
+  @Query("select e from Employee e " +
+      "left join fetch e.department " +
+      "left join fetch e.binaryContent " +
+      "where e.id = :id")
+  Optional<Employee> findByIdWithRelations(Long id);
 }
 
