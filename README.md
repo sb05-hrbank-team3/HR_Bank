@@ -22,37 +22,29 @@ Batch로 데이터를 관리하는 Open EMS
 HR Bank는 인사 데이터를 안전하고 효율적으로 관리할 수 있도록 설계된 Open EMS(Enterprise Management System)입니다. 대량의 데이터를 안정적으로 처리할 수 있는 Batch 시스템을 기반으로 부서 및 직원 정보를 체계적으로 운영할 수 있으며, 백업 자동화, 이력 관리, 대시보드 제공을 통해 기업 인사 관리를 더욱 효과적으로 지원합니다. 📊💼
 
 - **프로젝트 기간:** 2025.09.05 ~ 2025.09.16
-  
+
+---
 ### 기술 스택
-### 기술 스택
-#### Backend
-<p>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" width="40" height="40" alt="Spring Boot"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" width="40" height="40" alt="Java"/>
-  <img src="https://avatars.githubusercontent.com/u/8908513?s=200&v=4" width="40" height="40" alt="MapStruct"/>
-  <img src="https://img.icons8.com/?size=512&id=90519&format=png" width="40" height="40" alt="JPA"/>
-</p>
 
-#### Database
-<p>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" width="40" height="40" alt="PostgreSQL"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/h2database/h2database-original.svg" width="40" height="40" alt="H2"/>
-</p>
+#### Backend  
+![Spring Boot](https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=springboot&logoColor=white)
+![MapStruct](https://img.shields.io/badge/MapStruct-000000?style=flat&logo=mapstruct&logoColor=white)
+![Spring Data JPA](https://img.shields.io/badge/JPA-59666C?style=flat&logo=hibernate&logoColor=white)
 
-#### CI/CD
-<p>
-  <img src="https://railway.app/brand/logo-light.png" width="80" alt="Railway.io"/>
-</p>
+#### Database  
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)
+![H2](https://img.shields.io/badge/H2-004088?style=flat&logo=h2&logoColor=white)
 
-#### 공통 Tool
-<p>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" width="40" height="40" alt="Git"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" width="40" height="40" alt="GitHub"/>
-  <img src="https://img.icons8.com/color/512/notion.png" width="40" height="40" alt="Notion"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/discord/discord-original.svg" width="40" height="40" alt="Discord"/>
-</p>
+#### CI/CD  
+![Railway](https://img.shields.io/badge/Railway-0B0D0E?style=flat&logo=railway&logoColor=white)
 
+#### 협업 Tool  
+![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white)
+![Notion](https://img.shields.io/badge/Notion-000000?style=flat&logo=notion&logoColor=white)
+![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat&logo=discord&logoColor=white)
 
+---
 ## 팀원별 구현 기능 상세
 
 ## 예시
