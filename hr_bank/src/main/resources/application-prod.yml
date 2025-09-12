@@ -24,4 +24,7 @@ spring:
         jdbc.time_zone: UTC
     open-in-view: false
 
+# application-prod.yml
+swagger:
+  server-url: https://hrbank-production.up.railway.app/
 
