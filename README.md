@@ -62,10 +62,143 @@ HR Bank는 인사 데이터를 안전하고 효율적으로 관리할 수 있도
   회원 유형(관리자, 학생)에 따른 조건부 입력 처리 API 구현  
 
 ## 파일 구조
-
-
+```
+├─src
+  ├─main
+  │  ├─java
+  │  │  └─com
+  │  │      └─codeit
+  │  │          └─hrbank
+  │  │              │  HrBankApplication.java
+  │  │              │
+  │  │              ├─config
+  │  │              │      OpenApiConfig.java
+  │  │              │      QuerydslConfig.java
+  │  │              │      WebConfig.java
+  │  │              │
+  │  │              ├─controller
+  │  │              │      BackupController.java
+  │  │              │      BinaryContentController.java
+  │  │              │      ChangeLogController.java
+  │  │              │      DepartmentController.java
+  │  │              │      DownloadController.java
+  │  │              │      EmployeeController.java
+  │  │              │
+  │  │              ├─dto
+  │  │              │  ├─data
+  │  │              │  │      BackupDTO.java
+  │  │              │  │      BinaryContentDTO.java
+  │  │              │  │      ChangeLogDTO.java
+  │  │              │  │      DepartmentDTO.java
+  │  │              │  │      EmployeeDistributionDTO.java
+  │  │              │  │      EmployeeDTO.java
+  │  │              │  │      EmployeeTrendDTO.java
+  │  │              │  │      HistoryDTO.java
+  │  │              │  │
+  │  │              │  ├─request
+  │  │              │  │      BinaryContentCreateRequest.java
+  │  │              │  │      BinaryContentUpdateRequest.java
+  │  │              │  │      DepartmentCreateRequest.java
+  │  │              │  │      DepartmentUpdateRequest.java
+  │  │              │  │      EmployeeCreateRequest.java
+  │  │              │  │      EmployeeUpdateRequest.java
+  │  │              │  │      HistoryCreateRequest.java
+  │  │              │  │      HistoryUpdateRequest.java
+  │  │              │  │
+  │  │              │  └─response
+  │  │              │          CursorPageResponse.java
+  │  │              │
+  │  │              ├─entity
+  │  │              │      Backup.java
+  │  │              │      BackupStatus.java
+  │  │              │      BinaryContent.java
+  │  │              │      ChangeLog.java
+  │  │              │      ChangeLogType.java
+  │  │              │      DateUnit.java
+  │  │              │      Department.java
+  │  │              │      Employee.java
+  │  │              │      EmployeeGroupBy.java
+  │  │              │      EmployeeStatus.java
+  │  │              │      History.java
+  │  │              │
+  │  │              ├─exception
+  │  │              │      GlobalExceptionHandler.java
+  │  │              │
+  │  │              ├─mapper
+  │  │              │      BackupMapper.java
+  │  │              │      BinaryContentMapper.java
+  │  │              │      ChangeLogMapper.java
+  │  │              │      DepartmentMapper.java
+  │  │              │      EmployeeMapper.java
+  │  │              │      HistoryMapper.java
+  │  │              │      PageResponseMapper.java
+  │  │              │
+  │  │              ├─repository
+  │  │              │  │  BackupQueryRepository.java
+  │  │              │  │  BackupRepository.java
+  │  │              │  │  BinaryContentRepository.java
+  │  │              │  │  ChangeLogQueryRepository.java
+  │  │              │  │  ChangeLogRepository.java
+  │  │              │  │  DepartmentQueryRepository.java
+  │  │              │  │  DepartmentRepository.java
+  │  │              │  │  EmployeeQueryRepository.java
+  │  │              │  │  EmployeeRepository.java
+  │  │              │  │  HistoryRepository.java
+  │  │              │  │
+  │  │              │  └─impl
+  │  │              │          BackupQueryRepositoryImpl.java
+  │  │              │          ChangeLogQueryRepositoryImpl.java
+  │  │              │          DepartmentQueryRepositoryImpl.java
+  │  │              │          EmployeeQueryRepositoryImpl.java
+  │  │              │
+  │  │              ├─scheduler
+  │  │              │      MyScheduler.java
+  │  │              │
+  │  │              ├─service
+  │  │              │  │  BackupService.java
+  │  │              │  │  BinaryContentService.java
+  │  │              │  │  ChangeLogService.java
+  │  │              │  │  DepartmentService.java
+  │  │              │  │  EmployeeAnalyticsService.java
+  │  │              │  │  EmployeeService.java
+  │  │              │  │
+  │  │              │  ├─csv
+  │  │              │  │      CsvExportService.java
+  │  │              │  │
+  │  │              │  └─impl
+  │  │              │          BackupServiceImpl.java
+  │  │              │          BinaryContentServiceImpl.java
+  │  │              │          ChangeLogServiceImpl.java
+  │  │              │          DepartmentServiceImpl.java
+  │  │              │          EmployeeAnalyticsServiceImpl.java
+  │  │              │          EmployeeServiceImpl.java
+  │  │              │
+  │  │              ├─storage
+  │  │              │  │  BinaryContentStorage.java
+  │  │              │  │
+  │  │              │  └─type
+  │  │              │          LocalBinaryContentStorage.java
+  │  │              │
+  │  │              └─util
+  │  │                      ChangeLogUtils.java
+  │  │
+  │  └─resources
+  │        application-dev.yml
+  │        application-prod.yml
+  │        application.yml
+  │        schema.sql
+  │      
+  │      
+  └─test
+      └─java
+          └─com
+              └─codeit
+                  └─hrbank
+                          HrBankApplicationTests.java
+```
 ## 구현 홈페이지
-[https://www.codeit.kr/](https://www.codeit.kr/)
+- 실제 배포 사이트 : [https://hrbank-production.up.rail](https://hrbank-production.up.railway.app/swagger-ui/index.html)
+- 배포 Swagger :  [Swagger](https://hrbank-production.up.railway.app/swagger-ui/index.html)
 
 ## 프로젝트 회고록
 (제작한 발표자료 링크 혹은 첨부파일)
