@@ -4,7 +4,7 @@ spring:
 
   # DataSource (Railway ENV 기반)
   datasource:
-    url: ${{ Postgres.DATABASE_URL }}
+    url: ${JDBC_DATABASE_URL}
     driver-class-name: org.postgresql.Driver
 
   # JPA 설정
