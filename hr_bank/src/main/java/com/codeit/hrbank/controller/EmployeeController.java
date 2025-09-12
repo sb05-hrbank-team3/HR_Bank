@@ -6,6 +6,7 @@ import com.codeit.hrbank.dto.data.EmployeeTrendDTO;
 import com.codeit.hrbank.dto.request.EmployeeCreateRequest;
 import com.codeit.hrbank.dto.request.EmployeeUpdateRequest;
 import com.codeit.hrbank.dto.response.CursorPageResponse;
+import com.codeit.hrbank.entity.Employee;
 import com.codeit.hrbank.entity.EmployeeGroupBy;
 import com.codeit.hrbank.entity.EmployeeStatus;
 import com.codeit.hrbank.service.EmployeeAnalyticsService;
@@ -93,7 +94,9 @@ public class EmployeeController {
   @DeleteMapping("/{id}")
   public ResponseEntity<String> deleteEmployee(@PathVariable Long id, HttpServletRequest servletRequest) {
     String clientIp = servletRequest.getRemoteAddr();
-    employeeService.deleteEmployee(id, clientIp);
+    Employee employee = employeeService.deleteEmployeeDoSaveLog(id, clientIp);
+
+    employeeService.deleteEmployee(employee);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).body("삭제 성공");
   }
 

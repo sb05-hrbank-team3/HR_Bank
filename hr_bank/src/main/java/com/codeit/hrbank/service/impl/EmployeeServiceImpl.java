@@ -21,17 +21,11 @@ import com.codeit.hrbank.repository.HistoryRepository;
 import com.codeit.hrbank.service.EmployeeService;
 import com.codeit.hrbank.storage.BinaryContentStorage;
 import com.codeit.hrbank.util.ChangeLogUtils;
-import jakarta.persistence.EntityManager;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -51,8 +45,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   private final EmployeeMapper employeeMapper;
   private final PageResponseMapper pageResponseMapper;
-
-  private final EntityManager entityManager;
 
   @Override
   @Transactional
@@ -95,7 +87,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         .build();
     
     // 영속성 컨텍스트를 위한.
-    Employee savedEmployee = entityManager.merge(employee);
+    Employee savedEmployee = employeeRepository.save(employee);
 
     // ChangeLog + History
     ChangeLog changeLog = ChangeLogUtils.createChangeLog(ChangeLogType.CREATED, ipAddress, request.memo(), savedEmployee);
@@ -177,7 +169,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   @Transactional
-  public void deleteEmployee(Long employeeId, String ipAddress) {
+  public void deleteEmployee(Employee employee) {
+    if (employee.getBinaryContent() != null) {
+      binaryContentRepository.deleteById(employee.getBinaryContent().getId());
+      binaryContentStorage.deleteFile(employee.getBinaryContent().getId());
+    }
+      employeeRepository.deleteById(employee.getId());
+  }
+
+  @Override
+  @Transactional
+  public Employee deleteEmployeeDoSaveLog(Long employeeId, String ipAddress){
     Employee employee = employeeRepository.findById(employeeId)
         .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
 
@@ -187,13 +189,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     List<History> histories = ChangeLogUtils.createHistoriesForDelete(changeLog, employee);
     historyRepository.saveAll(histories);
 
-    Employee managedEmployee = entityManager.merge(employee);
-    entityManager.remove(managedEmployee);
-
-    if (employee.getBinaryContent() != null) {
-      binaryContentRepository.deleteById(employee.getBinaryContent().getId());
-      binaryContentStorage.deleteFile(employee.getBinaryContent().getId());
-    }
+    return employee;
   }
 
   @Override
