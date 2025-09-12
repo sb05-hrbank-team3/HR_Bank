@@ -5,6 +5,7 @@ import static com.codeit.hrbank.entity.QChangeLog.changeLog;
 
 import com.codeit.hrbank.entity.ChangeLog;
 import com.codeit.hrbank.entity.ChangeLogType;
+import com.codeit.hrbank.entity.QChangeLog;
 import com.codeit.hrbank.repository.ChangeLogQueryRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Repository;
 public class ChangeLogQueryRepositoryImpl implements ChangeLogQueryRepository {
   
   private final JPAQueryFactory queryFactory;
+  private final QChangeLog changeLog = QChangeLog.changeLog;
 
   @Override
   public List<ChangeLog> searchChangeLogs(
@@ -28,8 +30,9 @@ public class ChangeLogQueryRepositoryImpl implements ChangeLogQueryRepository {
     BooleanBuilder where = new BooleanBuilder();
 
     if (employeeNumber != null && !employeeNumber.isBlank()) {
-      where.and(employee.employeeNumber.contains(employeeNumber));
+      where.and(changeLog.employeeNumber.contains(employeeNumber));
     }
+
     if (memo != null && !memo.isBlank()) {
       where.and(changeLog.memo.contains(memo));
     }
@@ -57,7 +60,6 @@ public class ChangeLogQueryRepositoryImpl implements ChangeLogQueryRepository {
 
     return queryFactory
         .selectFrom(changeLog)
-        .join(changeLog.employee, employee).fetchJoin()
         .where(where)
         .orderBy(orderSpecifier)
         .limit(limitPlusOne)
@@ -68,7 +70,7 @@ public class ChangeLogQueryRepositoryImpl implements ChangeLogQueryRepository {
   public Long countChangeLogs(String employeeNumber, String memo, String ipAddress, ChangeLogType type, Instant atFrom, Instant atTo) {
     BooleanBuilder where = new BooleanBuilder();
     if (employeeNumber != null && !employeeNumber.isBlank()) {
-      where.and(employee.employeeNumber.contains(employeeNumber));
+      where.and(changeLog.employeeNumber.contains(employeeNumber));
     }
     if (memo != null && !memo.isBlank()) {
       where.and(changeLog.memo.contains(memo));
@@ -89,7 +91,6 @@ public class ChangeLogQueryRepositoryImpl implements ChangeLogQueryRepository {
     return queryFactory
         .select(changeLog.count())
         .from(changeLog)
-        .join(changeLog.employee, employee)
         .where(where)
         .fetchOne();
   }

@@ -10,5 +10,4 @@ public interface ChangeLogRepository extends JpaRepository<ChangeLog, Long>, Cha
 
   @Query("SELECT COUNT(c) FROM ChangeLog c WHERE c.at >= :from AND c.at <= :to")
   Long countBetween(@Param("from") Instant from, @Param("to") Instant to);
-
 }
