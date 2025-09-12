@@ -20,6 +20,7 @@ public class ChangeLogUtils {
                 .ipAddress(ipAddress)
                 .memo(memo != null ? memo : "")
                 .at(Instant.now())
+                .employee(employee)
                 .employeeNumber(employee.getEmployeeNumber())
                 .build();
     }
@@ -85,27 +86,14 @@ public class ChangeLogUtils {
 
     // 삭제용: 삭제되는 직원의 모든 주요 필드를 before 값으로 기록
     public static List<History> createHistoriesForDelete(ChangeLog changeLog, Employee employee) {
-        List<History> histories = new ArrayList<>();
-        Field[] fields = Employee.class.getDeclaredFields();
-
-        for (Field field : fields) {
-            field.setAccessible(true);
-            Object oldValue;
-            try {
-                oldValue = field.get(employee);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException("필드 접근 실패: " + field.getName(), e);
-            }
-
-            if (oldValue != null) {
-                histories.add(History.builder()
-                        .propertyName(field.getName())
-                        .before(oldValue.toString())
-                        .after(null) // 삭제니까 after는 null
-                        .changeLogs(changeLog)
-                        .build());
-            }
-        }
-        return histories;
+        return extractEmployeeValues(employee).entrySet().stream()
+            .filter(entry -> entry.getValue() != null)
+            .map(entry -> History.builder()
+                .propertyName(entry.getKey())
+                .before(entry.getValue())
+                .after(null)
+                .changeLogs(changeLog)
+                .build())
+            .toList();
     }
 }
