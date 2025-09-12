@@ -48,7 +48,95 @@ HR Bank는 인사 데이터를 안전하고 효율적으로 관리할 수 있도
 ![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)
 
 ---
-## 팀원별 구현 기능 상세
+# 팀원별 구현 기능 상세
+
+## 남현수
+## 직원 수정 (Update Employee)
+
+### 상황
+
+* 운영자가 직원 정보를 변경할 수 있어야 함.
+* 이름, 이메일, 부서, 직위, 상태, 프로필 이미지 등 다양한 속성이 수정될 수 있음.
+* 변경 이력(ChangeLog + History)도 반드시 남겨야 추후 감사 가능.
+
+### 문제
+
+* 이메일은 고유해야 하므로 중복 검증 필요.
+* 프로필 이미지(BinaryContent)는 파일 저장소와 DB를 함께 관리해야 함.
+* 기존 직원 데이터와 수정된 데이터를 비교해 **정확한 변경 이력**을 남겨야 함.
+
+### 행동
+
+* Service 계층에서 다음을 수행:
+
+  * `employeeRepository.existsByEmailAndIdNot()` 으로 중복 이메일 검사
+  * 파일이 포함되면 BinaryContent DB 저장 + Storage 저장 처리
+  * 기존 Employee를 `toBuilder()`로 복사 → 변경 요청값만 업데이트
+  * 저장 후, ChangeLog(Updated) + History 생성 → 변경된 속성만 기록
+
+```java
+Employee oldEmployee = employee.toBuilder().build();
+Employee updatedEmployee = employee.toBuilder()
+    .name(request.name() != null ? request.name() : employee.getName())
+    ...
+    .build();
+Employee savedEmployee = employeeRepository.save(updatedEmployee);
+
+ChangeLog changeLog = ChangeLogUtils.createChangeLog(ChangeLogType.UPDATED, ipAddress, request.memo(), savedEmployee);
+List<History> histories = ChangeLogUtils.createHistoriesForUpdate(changeLog, oldEmployee, savedEmployee);
+```
+
+### 결과
+
+* 운영자가 안전하게 직원 정보를 수정할 수 있음.
+* 파일과 DB가 일관성 있게 처리됨.
+* 변경 내역이 History 테이블에 기록되어 사후 감사 가능.
+
+---
+
+## 직원 삭제 (Delete Employee)
+
+### 상황
+
+* 직원 계정 삭제 시 관련 이력도 남겨야 함.
+* 프로필 이미지(BinaryContent)도 함께 정리해야 함.
+
+### 문제
+
+* 단순 삭제 시 이력 추적 불가 → 누가 언제 삭제했는지 확인 어려움.
+* BinaryContent orphan 데이터(DB + 파일)가 남아 관리 이슈 발생 가능.
+
+### 행동
+
+* Service 계층에서 두 단계 처리:
+
+  1. `deleteEmployee()`
+
+     * BinaryContent 존재 시 → DB 삭제 + Storage 파일 삭제
+     * Employee DB 삭제
+  2. `deleteEmployeeDoSaveLog()`
+
+     * 삭제 전 Employee 전체 정보 조회(`findByIdWithRelations`)
+     * ChangeLog(Deleted) 생성 + 저장
+     * Employee와 ChangeLog 관계 해제(`unlinkEmployee`)
+     * History 생성 (삭제된 직원의 모든 주요 필드를 before 값으로 저장)
+
+```java
+ChangeLog changeLog = ChangeLogUtils.createChangeLog(ChangeLogType.DELETED, ipAddress, null, employee);
+changeLogRepository.save(changeLog);
+changeLogRepository.unlinkEmployee(employee);
+
+List<History> histories = ChangeLogUtils.createHistoriesForDelete(changeLog, employee);
+historyRepository.saveAll(histories);
+```
+
+### 결과
+
+* 직원 삭제 시, 프로필 이미지까지 깔끔하게 정리.
+* ChangeLog + History를 통해 삭제 이력 보존.
+* 운영자가 삭제 후에도 과거 데이터 추적 가능.
+
+---
 
 ## 박 종현
 ## 페이지네이션 구현 (ChangeLog)
