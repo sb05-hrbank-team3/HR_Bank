@@ -1,44 +1,3 @@
-# HR_Bank
-Batch로 데이터를 관리하는 Open EMS
-
-> 🏢 기업의 핵심 자산, 인적 자원을 체계적으로 관리하세요!
-HR Bank는 인사 데이터를 안전하고 효율적으로 관리할 수 있도록 설계된 Open EMS(Enterprise Management System)입니다. 대량의 데이터를 안정적으로 처리할 수 있는 Batch 시스템을 기반으로 부서 및 직원 정보를 체계적으로 운영할 수 있으며, 백업 자동화, 이력 관리, 대시보드 제공을 통해 기업 인사 관리를 더욱 효과적으로 지원합니다. 📊💼
-
----
-## 📦 Dependencies
-
-### ✅ Spring Boot Starters
-
-* `spring-boot-starter-web` : REST API 및 웹 애플리케이션 개발
-* `spring-boot-starter-data-jpa` : JPA 기반 ORM (Hibernate 포함)
-* `spring-boot-starter-batch` : Spring Batch 배치 처리
-* `spring-boot-starter-test` : 통합 테스트 및 단위 테스트 지원
-* `spring-batch-test` : 배치 테스트 유틸리티
-
-### ✅ 데이터베이스
-
-* `org.postgresql:postgresql` : PostgreSQL 데이터베이스 드라이버
-* `com.h2database:h2` : 인메모리 H2 데이터베이스 (테스트용)
-
-### ✅ 개발 편의성
-
-* `spring-boot-devtools` : 핫 리로드 및 개발 환경 편의 기능
-* `lombok` : 보일러플레이트 코드 제거 (Getter/Setter, Builder 등)
-
-### ✅ API 문서화
-
-* `springdoc-openapi-starter-webmvc-ui:2.8.9` : OpenAPI 3.0(Swagger UI) 지원
-
-### ✅ 매핑/변환
-
-* `mapstruct` : DTO ↔ Entity 매핑 자동화 라이브러리
-
-
-### ✅ 테스트 도구
-
-* `junit-platform-launcher` : JUnit 실행 런처 (테스트 런타임 전용)
-
-
 # {팀 이름}
 
 [팀 협업 문서 링크](#)
@@ -53,16 +12,22 @@ HR Bank는 인사 데이터를 안전하고 효율적으로 관리할 수 있도
 | 민재영 | 백엔드/프론트 개발자 | 프론트엔드 및 데이터 백업 기능 개발, 파일 스토리지 설정 및 관리          | [GitHub](https://github.com/jymin0)    |
 
 
+---
 
 ## 프로젝트 소개
-프로그래밍 교육 사이트의 Spring 백엔드 시스템 구축  
+### HR_Bank
+Batch로 데이터를 관리하는 Open EMS
 
-- **프로젝트 기간:** 2024.08.13 ~ 2024.09.03  
+> 🏢 기업의 핵심 자산, 인적 자원을 체계적으로 관리하세요!
+HR Bank는 인사 데이터를 안전하고 효율적으로 관리할 수 있도록 설계된 Open EMS(Enterprise Management System)입니다. 대량의 데이터를 안정적으로 처리할 수 있는 Batch 시스템을 기반으로 부서 및 직원 정보를 체계적으로 운영할 수 있으며, 백업 자동화, 이력 관리, 대시보드 제공을 통해 기업 인사 관리를 더욱 효과적으로 지원합니다. 📊💼
 
+- **프로젝트 기간:** 2025.09.05 ~ 2025.09.16
+  
 ### 기술 스택
-- **Backend:** Spring Boot, Spring Security, Spring Data JPA  
-- **Database:** MySQL  
-- **공통 Tool:** Git & GitHub, Discord  
+- **Backend:** Spring Boot, MapStruct, Spring Data JPA  
+- **Database:** PostgreSQL, H2
+- **CI/CD:** Railway.io
+- **공통 Tool:** Git & GitHub, Notion, Discord  
 
 ## 팀원별 구현 기능 상세
 
