@@ -4,7 +4,9 @@ spring:
 
   # DataSource (Railway ENV 기반)
   datasource:
-    url: ${JDBC_DATABASE_URL}
+    url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
     driver-class-name: org.postgresql.Driver
 
   # JPA 설정
