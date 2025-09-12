@@ -24,13 +24,38 @@ HR Bank는 인사 데이터를 안전하고 효율적으로 관리할 수 있도
 - **프로젝트 기간:** 2025.09.05 ~ 2025.09.16
   
 ### 기술 스택
-- **Backend:** Spring Boot, MapStruct, Spring Data JPA  
-- **Database:** PostgreSQL, H2
-- **CI/CD:** Railway.io
-- **공통 Tool:** Git & GitHub, Notion, Discord  
+### 기술 스택
+#### Backend
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" width="40" height="40" alt="Spring Boot"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" width="40" height="40" alt="Java"/>
+  <img src="https://avatars.githubusercontent.com/u/8908513?s=200&v=4" width="40" height="40" alt="MapStruct"/>
+  <img src="https://img.icons8.com/?size=512&id=90519&format=png" width="40" height="40" alt="JPA"/>
+</p>
+
+#### Database
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" width="40" height="40" alt="PostgreSQL"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/h2database/h2database-original.svg" width="40" height="40" alt="H2"/>
+</p>
+
+#### CI/CD
+<p>
+  <img src="https://railway.app/brand/logo-light.png" width="80" alt="Railway.io"/>
+</p>
+
+#### 공통 Tool
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" width="40" height="40" alt="Git"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" width="40" height="40" alt="GitHub"/>
+  <img src="https://img.icons8.com/color/512/notion.png" width="40" height="40" alt="Notion"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/discord/discord-original.svg" width="40" height="40" alt="Discord"/>
+</p>
+
 
 ## 팀원별 구현 기능 상세
 
+## 예시
 ### 웨인
 (자신이 개발한 기능에 대한 사진이나 gif 파일 첨부)
 
@@ -41,50 +66,11 @@ HR Bank는 인사 데이터를 안전하고 효율적으로 관리할 수 있도
 - **회원 추가 정보 입력 API**  
   회원 유형(관리자, 학생)에 따른 조건부 입력 처리 API 구현  
 
-### 제이든
-(자신이 개발한 기능에 대한 사진이나 gif 파일 첨부)
-
-- **회원별 권한 관리**  
-  Spring Security를 활용하여 사용자 역할에 따른 권한 설정  
-  관리자 페이지와 일반 사용자 페이지를 위한 조건부 라우팅 처리  
-
-- **반응형 레이아웃 API**  
-  클라이언트에서 요청된 반응형 레이아웃을 위한 RESTful API 엔드포인트 구현  
-
-### 마크
-(자신이 개발한 기능에 대한 사진이나 gif 파일 첨부)
-
-- **수강생 정보 관리 API**  
-  GET 요청을 사용하여 학생의 수강 정보를 조회하는 API 엔드포인트 개발  
-  학생 정보의 CRUD 처리 (Spring Data JPA 사용)  
-
-- **공용 Button API**  
-  공통으로 사용할 버튼 기능을 처리하는 API 엔드포인트 구현  
-
-### 데이지
-(자신이 개발한 기능에 대한 사진이나 gif 파일 첨부)
-
-- **관리자 API**  
-  @PathVariable을 사용한 동적 라우팅 기능 구현  
-  PATCH, DELETE 요청을 사용하여 학생 정보를 수정하고 탈퇴하는 API 엔드포인트 개발  
-
-- **CRUD 기능**  
-  학생 정보의 CRUD 기능을 제공하는 API 구현 (Spring Data JPA)  
-
-- **회원관리 슬라이더**  
-  학생별 정보 목록을 Carousel 형식으로 조회하는 API 구현  
-
-### 제이
-(자신이 개발한 기능에 대한 사진이나 gif 파일 첨부)
-
-- **학생 시간 정보 관리 API**  
-  학생별 시간 정보를 GET 요청을 사용하여 조회하는 API 구현  
-  실시간 접속 현황을 관리하는 API 엔드포인트  
-
-- **수정 및 탈퇴 API**  
-  PATCH, DELETE 요청을 사용하여 수강생의 개인정보 수정 및 탈퇴 처리  
-
-- **공용 Modal API**  
-  공통 Modal 컴포넌트를 처리하는 API 구현  
-
 ## 파일 구조
+
+
+## 구현 홈페이지
+[https://www.codeit.kr/](https://www.codeit.kr/)
+
+## 프로젝트 회고록
+(제작한 발표자료 링크 혹은 첨부파일)
