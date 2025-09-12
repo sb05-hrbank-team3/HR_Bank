@@ -42,16 +42,20 @@ CREATE TABLE employees
             ON UPDATE CASCADE
 );
 
-
 -- 변경 로그
 CREATE TABLE change_logs
 (
-    id BIGSERIAL PRIMARY KEY,
-    type VARCHAR(20) NOT NULL,
-    ip_address VARCHAR(100) NOT NULL,
-    memo VARCHAR(100) NOT NULL,
-    at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    employee_number VARCHAR(100) NOT NULL
+    id          BIGSERIAL PRIMARY KEY,
+    type        VARCHAR(20)  NOT NULL,
+    ip_address  VARCHAR(100) NOT NULL,
+    memo        VARCHAR(100) NOT NULL,
+    at          TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    employee_id BIGINT,  -- NULL 허용(직원 삭제 후에도 로그는 남김)
+    employee_number VARCHAR(100) NOT NULL,
+
+    CONSTRAINT fk_changelog_employee
+        FOREIGN KEY (employee_id) REFERENCES employees (id)
+            ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- 변경 이력 상세
