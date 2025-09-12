@@ -1,17 +1,6 @@
 spring:
   profiles:
     active: prod
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-    open-in-view: false
   batch:
     job:
       enabled: false
-
-logging:
-  level:
-    org.springframework: INFO

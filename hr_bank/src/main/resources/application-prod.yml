@@ -3,9 +3,9 @@ spring:
     name: hrbank
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/hrbank
-    username: hrbank_user
-    password: hrbank_1234
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/hrbank}
+    username: ${JDBC_DATABASE_USERNAME:hrbank_user}
+    password: ${JDBC_DATABASE_PASSWORD:hrbank_1234}
     driver-class-name: org.postgresql.Driver
   # JPA
   jpa:

@@ -85,39 +85,33 @@ CREATE TABLE backups
             ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- -- 하위 테이블부터 삭제
-DROP TABLE IF EXISTS histories CASCADE;
-DROP TABLE IF EXISTS change_logs CASCADE;
-DROP TABLE IF EXISTS backups CASCADE;
-DROP TABLE IF EXISTS employees CASCADE;
-DROP TABLE IF EXISTS binary_contents CASCADE;
-DROP TABLE IF EXISTS departments CASCADE;
-
-
--- 전체 데이터 삭제
-TRUNCATE TABLE histories CASCADE;
-TRUNCATE TABLE change_logs CASCADE;
-TRUNCATE TABLE backups CASCADE;
-TRUNCATE TABLE employees CASCADE;
-TRUNCATE TABLE binary_contents CASCADE;
-TRUNCATE TABLE departments CASCADE;
-
-CREATE USER hrbank_user WITH PASSWORD 'hrbank_1234';
-GRANT ALL PRIVILEGES ON DATABASE hrbank TO hrbank_user;
--- ROLE이 모든 테이블/시퀀스 권한 가짐
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO hrbank_role;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO hrbank_role;
-
--- 앞으로 생성될 테이블/시퀀스도 자동 권한 부여
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO hrbank_role;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO hrbank_role;
-
-GRANT ALL PRIVILEGES ON SCHEMA public TO hrbank_user;
-
-GRANT hrbank_role TO hrbank_user;
-
-ALTER TABLE change_logs
-    ADD CONSTRAINT fk_change_logs_employee
-        FOREIGN KEY (employee_id)
-            REFERENCES employees(id)
-            ON DELETE SET NULL;
+-- -- -- 하위 테이블부터 삭제
+-- DROP TABLE IF EXISTS histories CASCADE;
+-- DROP TABLE IF EXISTS change_logs CASCADE;
+-- DROP TABLE IF EXISTS backups CASCADE;
+-- DROP TABLE IF EXISTS employees CASCADE;
+-- DROP TABLE IF EXISTS binary_contents CASCADE;
+-- DROP TABLE IF EXISTS departments CASCADE;
+--
+--
+-- -- 전체 데이터 삭제
+-- TRUNCATE TABLE histories CASCADE;
+-- TRUNCATE TABLE change_logs CASCADE;
+-- TRUNCATE TABLE backups CASCADE;
+-- TRUNCATE TABLE employees CASCADE;
+-- TRUNCATE TABLE binary_contents CASCADE;
+-- TRUNCATE TABLE departments CASCADE;
+--
+-- CREATE USER hrbank_user WITH PASSWORD 'hrbank_1234';
+-- GRANT ALL PRIVILEGES ON DATABASE hrbank TO hrbank_user;
+-- -- ROLE이 모든 테이블/시퀀스 권한 가짐
+-- GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO hrbank_role;
+-- GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO hrbank_role;
+--
+-- -- 앞으로 생성될 테이블/시퀀스도 자동 권한 부여
+-- ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO hrbank_role;
+-- ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO hrbank_role;
+--
+-- GRANT ALL PRIVILEGES ON SCHEMA public TO hrbank_user;
+--
+-- GRANT hrbank_role TO hrbank_user;
