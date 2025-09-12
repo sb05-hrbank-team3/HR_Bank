@@ -20,6 +20,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
   @Override
+  @Transactional
   public DepartmentDTO create(DepartmentCreateRequest request) {
     if(departmentRepository.existsByName(request.name())){
       throw new IllegalArgumentException("부서명은 중복될 수 없습니다.");
@@ -48,6 +50,7 @@ public class DepartmentServiceImpl implements DepartmentService {
   }
 
   @Override
+  @Transactional
   public CursorPageResponse<DepartmentDTO> findAll(
       String nameOrDescription,
       Long idAfter,
@@ -94,11 +97,13 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
   @Override
+  @Transactional
   public Optional<DepartmentDTO> findById(Long id) {
     return departmentRepository.findById(id).map(departmentMapper::toDepartmentDTO);
   }
 
   @Override
+  @Transactional
   public void deleteById(Long id) throws IllegalStateException {
     Department department = departmentRepository
         .findById(id).orElseThrow(() -> new NoSuchElementException("삭제 대상 부서가 없습니다: " + id));
@@ -120,14 +125,23 @@ public class DepartmentServiceImpl implements DepartmentService {
   }
 
   @Override
+  @Transactional
   public DepartmentDTO update(Long id, DepartmentUpdateRequest request) {
+    Department department = departmentRepository.findById(id)
+        .orElseThrow(() -> new NoSuchElementException("부서를 찾을 수 없습니다: " + id));
+
     if(departmentRepository.existsByName(request.name())){
       throw new IllegalArgumentException("부서명은 중복될 수 없습니다.");
     }
 
-    Department department = departmentRepository.findById(id)
-        .orElseThrow(() -> new NoSuchElementException("부서를 찾을 수 없습니다: " + id));
+    Department build = department.toBuilder()
+        .name(request.name())
+        .description(request.description())
+        .establishedDate(request.establishedDate())
+        .build();
 
-    return departmentMapper.toDepartmentDTO(departmentRepository.save(department));
+    Department save = departmentRepository.save(build);
+
+    return departmentMapper.toDepartmentDTO(save);
   }
 }

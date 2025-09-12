@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "departments")
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Department {
