@@ -147,10 +147,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     Employee updatedEmployee = employee.toBuilder()
         .name(request.name() != null ? request.name() : employee.getName())
         .email(request.email() != null ? request.email() : employee.getEmail())
-        .department(department != null ? department : employee.getDepartment())
-        .status(request.status() != null ? request.status() : employee.getStatus())
+        .hireDate(request.hireDate() != null ? request.hireDate() : employee.getHireDate())
         .position(request.position() != null ? request.position() : employee.getPosition())
+        .status(request.status() != null ? request.status() : employee.getStatus())
         .binaryContent(binaryContent != null ? binaryContent : employee.getBinaryContent())
+        .department(department != null ? department : employee.getDepartment())
         .build();
 
     Employee savedEmployee = employeeRepository.save(updatedEmployee);

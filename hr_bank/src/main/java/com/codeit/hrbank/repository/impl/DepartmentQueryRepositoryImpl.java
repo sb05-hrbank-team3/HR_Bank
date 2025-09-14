@@ -39,42 +39,20 @@ public class DepartmentQueryRepositoryImpl implements DepartmentQueryRepository 
       where.and(department.id.gt(idAfter));
     }
 
-    if (sortField.equals("name") && sortDirection.equals("asc")) {
-      return queryFactory
-          .select(department)
-          .from(department)
-          .limit(size)
-          .where(where)
-          .orderBy(department.name.asc())
-          .fetch();
-    }
-
-    if (sortField.equals("name") && sortDirection.equals("desc")) {
-      return queryFactory
-          .select(department)
-          .from(department)
-          .limit(size)
-          .where(where)
-          .orderBy(department.name.desc())
-          .fetch();
-    }
-
-    if (sortField.equals("establishedDate") && sortDirection.equals("desc")) {
-      return queryFactory
-          .select(department)
-          .from(department)
-          .limit(size)
-          .where(where)
-          .orderBy(department.establishedDate.desc())
-          .fetch();
-    }
+    // OrderSpecifier 생성
+    boolean asc = !"DESC".equalsIgnoreCase(sortDirection);
+    com.querydsl.core.types.OrderSpecifier<?> order = switch (sortField) {
+      case "name" -> asc ? department.name.asc() : department.name.desc();
+      case "establishedDate" -> asc ? department.establishedDate.asc() : department.establishedDate.desc();
+      default -> department.id.asc(); // 기본 정렬
+    };
 
     return queryFactory
         .select(department)
         .from(department)
         .limit(size)
         .where(where)
-        .orderBy(department.establishedDate.asc())
+        .orderBy(order)
         .fetch();
   }
 
