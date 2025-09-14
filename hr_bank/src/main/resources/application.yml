@@ -15,12 +15,6 @@ logging:
     org.springframework: INFO
     org.hibernate.SQL: WARN
 
-# HRBank 커스텀 설정
-hrbank:
-  storage:
-    type: local
-    local:
-      root-path: ./storage
   backup:
     cron: "0 0 * * * *"
     worker: "system"

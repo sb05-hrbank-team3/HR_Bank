@@ -419,6 +419,67 @@ public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
 
 --- 
 
+## 이예림
+## 대시보드_기간 단위별 직원 수 집계
+
+### 상황
+
+- 일/주/월/분기/년 단위로 버킷(기간 단위 묶음)을 만들어 각 구간의 직원수 추이를 계산해야 함.
+
+### 문제
+
+- 마지막 버킷의 끝 경계가 to를 넘거나 모자라서 하루가 중복/누락되는 사례 발생 -> 그래프가 한 칸 밀리거나 값이 과소/과대 집계됨
+
+### 행동
+
+- 마지막 버킷만 endExclusive = toDate.plusDays(1)로 보정하고, 스냅샷 기준일을 ref = endExclusive.minusDays(1)로 통일
+  
+  ```java
+	LocalDate nextStart = bump(start, dateUnit);
+	LocalDate endExclusive = (i + 1 < starts.size()) ? nextStart : toDate.plusDays(1);
+	LocalDate ref = endExclusive.minusDays(1); // 구간 끝 하루
+	counts.add(employeeRepository.countEmployeesAt(ref));
+  ```
+
+### 결과
+
+- 월/분기의 초반과 말에 값이 튀던 현상 제거
+- 그래프 안정성 ↑
+  
+---
+
+## 대시보드_부서별 직원 분포 집계
+
+### 상황
+
+- 대시보드에 부서별 직원 분포를 보여줘야 함.
+
+### 문제
+
+- 부서별
+  - 초기에는 각 부서마다 employeeRepository.countByDepartmentAndStatus() 쿼리를 따로 호출되는 N+1 문제 발생 
+  - 결과적으로 DB 부하 증가 및 응답 속도 느려짐
+
+
+ ### 행동
+ 
+- 부서별
+  - 모든 부서 ID를 한 번에 모아서 단일 쿼리로 카운트 가져오도록 변경
+  - ID 집합으로 모아 한번에 group by 조회
+
+	```java
+	Set<Long> deptIds = new HashSet<>();
+	departments.forEach(d -> deptIds.add(d.getId()));
+	Map<Long, Long> counts = employeeRepository.countEmployeesByDepartmentIds(status, deptIds);
+	  ```
+
+### 결과
+- 쿼리 호출 수 1회로 단축
+- 응답 속도 개션
+- 부서 개수가 늘어나도 성능 안정적 유지
+  
+---
+
 ## 구현 홈페이지
 - 실제 배포 사이트 : [https://hrbank-production.up.rail](https://hrbank-production.up.railway.app/swagger-ui/index.html)
 - 배포 Swagger :  [Swagger](https://hrbank-production.up.railway.app/swagger-ui/index.html)

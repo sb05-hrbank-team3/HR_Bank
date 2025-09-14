@@ -28,3 +28,8 @@ spring:
 swagger:
   server-url: https://hrbank-production.up.railway.app/
 
+hrbank:
+  storage:
+    type: local
+    local:
+      root-path: /storage
