@@ -48,24 +48,380 @@ HR Bank는 인사 데이터를 안전하고 효율적으로 관리할 수 있도
 ![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)
 
 ---
-## 팀원별 구현 기능 상세
+# 팀원별 구현 기능 상세
 
-## 예시
-### 웨인
-(자신이 개발한 기능에 대한 사진이나 gif 파일 첨부)
+## 남현수
+## 직원 수정 (Update Employee)
 
-- **소셜 로그인 API**  
-  Google OAuth 2.0을 활용한 소셜 로그인 기능 구현  
-  로그인 후 추가 정보 입력을 위한 RESTful API 엔드포인트 개발  
+### 상황
 
-- **회원 추가 정보 입력 API**  
-  회원 유형(관리자, 학생)에 따른 조건부 입력 처리 API 구현  
+* 운영자가 직원 정보를 변경할 수 있어야 함.
+* 이름, 이메일, 부서, 직위, 상태, 프로필 이미지 등 다양한 속성이 수정될 수 있음.
+* 변경 이력(ChangeLog + History)도 반드시 남겨야 추후 감사 가능.
 
+### 문제
+
+* 이메일은 고유해야 하므로 중복 검증 필요.
+* 프로필 이미지(BinaryContent)는 파일 저장소와 DB를 함께 관리해야 함.
+* 기존 직원 데이터와 수정된 데이터를 비교해 **정확한 변경 이력**을 남겨야 함.
+
+### 행동
+
+* Service 계층에서 다음을 수행:
+
+  * `employeeRepository.existsByEmailAndIdNot()` 으로 중복 이메일 검사
+  * 파일이 포함되면 BinaryContent DB 저장 + Storage 저장 처리
+  * 기존 Employee를 `toBuilder()`로 복사 → 변경 요청값만 업데이트
+  * 저장 후, ChangeLog(Updated) + History 생성 → 변경된 속성만 기록
+
+```java
+Employee oldEmployee = employee.toBuilder().build();
+Employee updatedEmployee = employee.toBuilder()
+    .name(request.name() != null ? request.name() : employee.getName())
+    ...
+    .build();
+Employee savedEmployee = employeeRepository.save(updatedEmployee);
+
+ChangeLog changeLog = ChangeLogUtils.createChangeLog(ChangeLogType.UPDATED, ipAddress, request.memo(), savedEmployee);
+List<History> histories = ChangeLogUtils.createHistoriesForUpdate(changeLog, oldEmployee, savedEmployee);
+```
+
+### 결과
+
+* 운영자가 안전하게 직원 정보를 수정할 수 있음.
+* 파일과 DB가 일관성 있게 처리됨.
+* 변경 내역이 History 테이블에 기록되어 사후 감사 가능.
+
+---
+
+## 직원 삭제 (Delete Employee)
+
+### 상황
+
+* 직원 계정 삭제 시 관련 이력도 남겨야 함.
+* 프로필 이미지(BinaryContent)도 함께 정리해야 함.
+
+### 문제
+
+* 단순 삭제 시 이력 추적 불가 → 누가 언제 삭제했는지 확인 어려움.
+* BinaryContent orphan 데이터(DB + 파일)가 남아 관리 이슈 발생 가능.
+
+### 행동
+
+* Service 계층에서 두 단계 처리:
+
+  1. `deleteEmployee()`
+
+     * BinaryContent 존재 시 → DB 삭제 + Storage 파일 삭제
+     * Employee DB 삭제
+  2. `deleteEmployeeDoSaveLog()`
+
+     * 삭제 전 Employee 전체 정보 조회(`findByIdWithRelations`)
+     * ChangeLog(Deleted) 생성 + 저장
+     * Employee와 ChangeLog 관계 해제(`unlinkEmployee`)
+     * History 생성 (삭제된 직원의 모든 주요 필드를 before 값으로 저장)
+
+```java
+ChangeLog changeLog = ChangeLogUtils.createChangeLog(ChangeLogType.DELETED, ipAddress, null, employee);
+changeLogRepository.save(changeLog);
+changeLogRepository.unlinkEmployee(employee);
+
+List<History> histories = ChangeLogUtils.createHistoriesForDelete(changeLog, employee);
+historyRepository.saveAll(histories);
+```
+
+### 결과
+
+* 직원 삭제 시, 프로필 이미지까지 깔끔하게 정리.
+* ChangeLog + History를 통해 삭제 이력 보존.
+* 운영자가 삭제 후에도 과거 데이터 추적 가능.
+  
+---
+## 류승민
+### 부서 관리
+
+### 상황
+- 부서 CRUD를 추가하여야 함.
+
+### 문제
+- 부서 삭제는 소속된 직원이 없는 경우에만 가능
+- 목록 조회는 선택으로 조건을 받기 때문에 JpaRepository로는 한계가 있음
+  
+### 행동
+<details>
+  <summary>파일구조 보기</summary>
+
+```java
+DepartmentService에서 소속된 직원이 있는지 확인
+public void deleteById(Long id) throws IllegalStateException {  
+	Department department = departmentRepository.findById(id)
+	.orElseThrow(() -> new NoSuchElementException("삭제 대상 부서가 없습니다: " + id));
+	List<Employee> employees= employeeRepository.findAll();  
+	boolean exists = employees.stream()
+	.anyMatch(e -> e.getDepartment().getId().equals(id));
+	if (exists) {
+	    throw new IllegalStateException("소속된 직원이 1명 이상이면 삭제가 불가능합니다: " + id ); 
+	}  
+	departmentRepository.deleteById(id);
+}
+
+QueryDSL을 사용해서 필요한 조건으로 쿼리문 생성
+if (nameOrDescription != null && !nameOrDescription.isBlank()) {
+      where.and(department.name.containsIgnoreCase(nameOrDescription)
+          .or(department.description.containsIgnoreCase(nameOrDescription)));
+}
+if (idAfter != null) {
+		where.and(department.id.gt(idAfter));
+}
+
+if (sortField.equals("name") && sortDirection.equals("asc")) {
+    return queryFactory
+        .select(department)
+        .from(department)
+        .limit(size)
+        .where(where)
+        .orderBy(department.name.asc())
+        .fetch();
+}
+if (sortField.equals("name") && sortDirection.equals("desc")) {
+    return queryFactory
+        .select(department)
+        .from(department)
+        .limit(size)
+        .where(where)
+        .orderBy(department.name.desc())
+        .fetch();
+}
+if (sortField.equals("establishedDate") && sortDirection.equals("desc")) {
+    return queryFactory
+        .select(department)
+        .from(department)
+        .limit(size)
+        .where(where)
+        .orderBy(department.establishedDate.desc())
+        .fetch();
+}
+
+  return queryFactory
+      .select(department)
+      .from(department)
+      .limit(size)
+      .where(where)
+      .orderBy(department.establishedDate.asc())
+      .fetch();
+}
+
+```
+</details>
+
+### 결과
+
+- 불필요한 조건 제거 → 실행 쿼리 단순화.
+- 참조 무결성 유지
+  
+---
+
+## 박종현
+## 페이지네이션 구현 (ChangeLog)
+
+### 상황
+
+- 대량 데이터에서도 안정적인 페이지네이션 정렬 필요.
+
+### 문제
+
+- 페이지네이션을 사용하지 않으면 전체 쿼리를 항상 구해와 성능적으로 떨어짐
+- ChangeLog, Histories같은 데이터는 많이 쌓이므로 페이지별로 구해오는 과정이 필요함.
+
+### 행동
+
+- Service
+    - Repository의 검색 결과를 size + 1로 조회, hasNext 판별 후 자르기
+    - 마지막 요소의 `id` 다음 커서로 사용: `nextCursor = {"id": <lastId>}` 문자열 생성
+
+<details>
+  <summary>searchChangeLogs 메서드 보기</summary>
+
+```java
+@Override
+public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
+    String employeeNumber, String memo, String ipAddress, ChangeLogType type, Instant atFrom, Instant atTo, Long idAfter,
+    String cursor, int size, String sortField, String sortDirection) {
+
+  List<ChangeLog> changeLogs = changeLogRepository.searchChangeLogs(
+      employeeNumber, memo, ipAddress, type, atFrom, atTo, idAfter, size + 1, sortField, sortDirection);
+  boolean hasNext = changeLogs.size() > size;
+  if(hasNext) changeLogs = changeLogs.subList(0, size);
+
+  List<ChangeLogDTO> dtos = changeLogs.stream()
+      .map(changeLogMapper::toDto)
+      .toList();
+
+  Long nextIdAfter = hasNext ? dtos.get(dtos.size() - 1).id() : null;
+  long totalCount = changeLogRepository.countChangeLogs(employeeNumber, memo, ipAddress, type, atFrom, atTo);
+
+  return CursorPageResponse.<ChangeLogDTO>builder()
+      .content(dtos)
+      .nextCursor(nextIdAfter != null ? ("{\"id\":" + nextIdAfter + "}") : null)
+      .nextIdAfter(nextIdAfter)
+      .size(size)
+      .totalElements(totalCount)
+      .hasNext(hasNext)
+      .build();
+}
+```
+</details> 
+
+### 결과
+
+- 운영자가 원하는 조건으로 안정적인 이력 조회 가능.
+- 커서 방식으로 스크롤형 페이지네이션 시 응답 안정성 확보.
+  
 ## 파일 구조
+<details>
+  <summary>파일구조 보기</summary>
+ 
+```
+├─src
+  ├─main
+  │  ├─java
+  │  │  └─com
+  │  │      └─codeit
+  │  │          └─hrbank
+  │  │              │  HrBankApplication.java
+  │  │              │
+  │  │              ├─config
+  │  │              │      OpenApiConfig.java
+  │  │              │      QuerydslConfig.java
+  │  │              │      WebConfig.java
+  │  │              │
+  │  │              ├─controller
+  │  │              │      BackupController.java
+  │  │              │      BinaryContentController.java
+  │  │              │      ChangeLogController.java
+  │  │              │      DepartmentController.java
+  │  │              │      DownloadController.java
+  │  │              │      EmployeeController.java
+  │  │              │
+  │  │              ├─dto
+  │  │              │  ├─data
+  │  │              │  │      BackupDTO.java
+  │  │              │  │      BinaryContentDTO.java
+  │  │              │  │      ChangeLogDTO.java
+  │  │              │  │      DepartmentDTO.java
+  │  │              │  │      EmployeeDistributionDTO.java
+  │  │              │  │      EmployeeDTO.java
+  │  │              │  │      EmployeeTrendDTO.java
+  │  │              │  │      HistoryDTO.java
+  │  │              │  │
+  │  │              │  ├─request
+  │  │              │  │      BinaryContentCreateRequest.java
+  │  │              │  │      BinaryContentUpdateRequest.java
+  │  │              │  │      DepartmentCreateRequest.java
+  │  │              │  │      DepartmentUpdateRequest.java
+  │  │              │  │      EmployeeCreateRequest.java
+  │  │              │  │      EmployeeUpdateRequest.java
+  │  │              │  │      HistoryCreateRequest.java
+  │  │              │  │      HistoryUpdateRequest.java
+  │  │              │  │
+  │  │              │  └─response
+  │  │              │          CursorPageResponse.java
+  │  │              │
+  │  │              ├─entity
+  │  │              │      Backup.java
+  │  │              │      BackupStatus.java
+  │  │              │      BinaryContent.java
+  │  │              │      ChangeLog.java
+  │  │              │      ChangeLogType.java
+  │  │              │      DateUnit.java
+  │  │              │      Department.java
+  │  │              │      Employee.java
+  │  │              │      EmployeeGroupBy.java
+  │  │              │      EmployeeStatus.java
+  │  │              │      History.java
+  │  │              │
+  │  │              ├─exception
+  │  │              │      GlobalExceptionHandler.java
+  │  │              │
+  │  │              ├─mapper
+  │  │              │      BackupMapper.java
+  │  │              │      BinaryContentMapper.java
+  │  │              │      ChangeLogMapper.java
+  │  │              │      DepartmentMapper.java
+  │  │              │      EmployeeMapper.java
+  │  │              │      HistoryMapper.java
+  │  │              │      PageResponseMapper.java
+  │  │              │
+  │  │              ├─repository
+  │  │              │  │  BackupQueryRepository.java
+  │  │              │  │  BackupRepository.java
+  │  │              │  │  BinaryContentRepository.java
+  │  │              │  │  ChangeLogQueryRepository.java
+  │  │              │  │  ChangeLogRepository.java
+  │  │              │  │  DepartmentQueryRepository.java
+  │  │              │  │  DepartmentRepository.java
+  │  │              │  │  EmployeeQueryRepository.java
+  │  │              │  │  EmployeeRepository.java
+  │  │              │  │  HistoryRepository.java
+  │  │              │  │
+  │  │              │  └─impl
+  │  │              │          BackupQueryRepositoryImpl.java
+  │  │              │          ChangeLogQueryRepositoryImpl.java
+  │  │              │          DepartmentQueryRepositoryImpl.java
+  │  │              │          EmployeeQueryRepositoryImpl.java
+  │  │              │
+  │  │              ├─scheduler
+  │  │              │      MyScheduler.java
+  │  │              │
+  │  │              ├─service
+  │  │              │  │  BackupService.java
+  │  │              │  │  BinaryContentService.java
+  │  │              │  │  ChangeLogService.java
+  │  │              │  │  DepartmentService.java
+  │  │              │  │  EmployeeAnalyticsService.java
+  │  │              │  │  EmployeeService.java
+  │  │              │  │
+  │  │              │  ├─csv
+  │  │              │  │      CsvExportService.java
+  │  │              │  │
+  │  │              │  └─impl
+  │  │              │          BackupServiceImpl.java
+  │  │              │          BinaryContentServiceImpl.java
+  │  │              │          ChangeLogServiceImpl.java
+  │  │              │          DepartmentServiceImpl.java
+  │  │              │          EmployeeAnalyticsServiceImpl.java
+  │  │              │          EmployeeServiceImpl.java
+  │  │              │
+  │  │              ├─storage
+  │  │              │  │  BinaryContentStorage.java
+  │  │              │  │
+  │  │              │  └─type
+  │  │              │          LocalBinaryContentStorage.java
+  │  │              │
+  │  │              └─util
+  │  │                      ChangeLogUtils.java
+  │  │
+  │  └─resources
+  │        application-dev.yml
+  │        application-prod.yml
+  │        application.yml
+  │        schema.sql
+  │      
+  │      
+  └─test
+      └─java
+          └─com
+              └─codeit
+                  └─hrbank
+                          HrBankApplicationTests.java
+```
+</details>
 
+--- 
 
 ## 구현 홈페이지
-[https://www.codeit.kr/](https://www.codeit.kr/)
+- 실제 배포 사이트 : [https://hrbank-production.up.rail](https://hrbank-production.up.railway.app/swagger-ui/index.html)
+- 배포 Swagger :  [Swagger](https://hrbank-production.up.railway.app/swagger-ui/index.html)
 
 ## 프로젝트 회고록
 (제작한 발표자료 링크 혹은 첨부파일)
