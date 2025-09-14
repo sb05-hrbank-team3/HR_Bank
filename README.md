@@ -135,10 +135,93 @@ historyRepository.saveAll(histories);
 * 직원 삭제 시, 프로필 이미지까지 깔끔하게 정리.
 * ChangeLog + History를 통해 삭제 이력 보존.
 * 운영자가 삭제 후에도 과거 데이터 추적 가능.
+  
+---
+## 류승민
+### 부서 관리
 
+### 상황
+- 부서 CRUD를 추가하여야 함.
+
+### 문제
+- 부서 삭제는 소속된 직원이 없는 경우에만 가능
+- 목록 조회는 선택으로 조건을 받기 때문에 JpaRepository로는 한계가 있음
+  
+### 행동
+<details>
+  <summary>파일구조 보기</summary>
+
+```java
+DepartmentService에서 소속된 직원이 있는지 확인
+public void deleteById(Long id) throws IllegalStateException {  
+	Department department = departmentRepository.findById(id)
+	.orElseThrow(() -> new NoSuchElementException("삭제 대상 부서가 없습니다: " + id));
+	List<Employee> employees= employeeRepository.findAll();  
+	boolean exists = employees.stream()
+	.anyMatch(e -> e.getDepartment().getId().equals(id));
+	if (exists) {
+	    throw new IllegalStateException("소속된 직원이 1명 이상이면 삭제가 불가능합니다: " + id ); 
+	}  
+	departmentRepository.deleteById(id);
+}
+
+QueryDSL을 사용해서 필요한 조건으로 쿼리문 생성
+if (nameOrDescription != null && !nameOrDescription.isBlank()) {
+      where.and(department.name.containsIgnoreCase(nameOrDescription)
+          .or(department.description.containsIgnoreCase(nameOrDescription)));
+}
+if (idAfter != null) {
+		where.and(department.id.gt(idAfter));
+}
+
+if (sortField.equals("name") && sortDirection.equals("asc")) {
+    return queryFactory
+        .select(department)
+        .from(department)
+        .limit(size)
+        .where(where)
+        .orderBy(department.name.asc())
+        .fetch();
+}
+if (sortField.equals("name") && sortDirection.equals("desc")) {
+    return queryFactory
+        .select(department)
+        .from(department)
+        .limit(size)
+        .where(where)
+        .orderBy(department.name.desc())
+        .fetch();
+}
+if (sortField.equals("establishedDate") && sortDirection.equals("desc")) {
+    return queryFactory
+        .select(department)
+        .from(department)
+        .limit(size)
+        .where(where)
+        .orderBy(department.establishedDate.desc())
+        .fetch();
+}
+
+  return queryFactory
+      .select(department)
+      .from(department)
+      .limit(size)
+      .where(where)
+      .orderBy(department.establishedDate.asc())
+      .fetch();
+}
+
+```
+</details>
+
+### 결과
+
+- 불필요한 조건 제거 → 실행 쿼리 단순화.
+- 참조 무결성 유지
+  
 ---
 
-## 박 종현
+## 박종현
 ## 페이지네이션 구현 (ChangeLog)
 
 ### 상황
@@ -156,42 +239,48 @@ historyRepository.saveAll(histories);
     - Repository의 검색 결과를 size + 1로 조회, hasNext 판별 후 자르기
     - 마지막 요소의 `id` 다음 커서로 사용: `nextCursor = {"id": <lastId>}` 문자열 생성
 
+<details>
+  <summary>searchChangeLogs 메서드 보기</summary>
+
 ```java
 @Override
-  public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
-      String employeeNumber, String memo, String ipAddress, ChangeLogType type, Instant atFrom, Instant atTo, Long idAfter,
-      String cursor, int size, String sortField, String sortDirection) {
+public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
+    String employeeNumber, String memo, String ipAddress, ChangeLogType type, Instant atFrom, Instant atTo, Long idAfter,
+    String cursor, int size, String sortField, String sortDirection) {
 
-    List<ChangeLog> changeLogs = changeLogRepository.searchChangeLogs(
-        employeeNumber, memo, ipAddress, type, atFrom, atTo, idAfter, size + 1, sortField, sortDirection);
-    boolean hasNext = changeLogs.size() > size;
-    if(hasNext) changeLogs = changeLogs.subList(0, size);
+  List<ChangeLog> changeLogs = changeLogRepository.searchChangeLogs(
+      employeeNumber, memo, ipAddress, type, atFrom, atTo, idAfter, size + 1, sortField, sortDirection);
+  boolean hasNext = changeLogs.size() > size;
+  if(hasNext) changeLogs = changeLogs.subList(0, size);
 
-    List<ChangeLogDTO> dtos = changeLogs.stream()
-        .map(changeLogMapper::toDto)
-        .toList();
+  List<ChangeLogDTO> dtos = changeLogs.stream()
+      .map(changeLogMapper::toDto)
+      .toList();
 
-    Long nextIdAfter = hasNext ? dtos.get(dtos.size() - 1).id() : null;
-    long totalCount = changeLogRepository.countChangeLogs(employeeNumber, memo, ipAddress, type, atFrom, atTo);
+  Long nextIdAfter = hasNext ? dtos.get(dtos.size() - 1).id() : null;
+  long totalCount = changeLogRepository.countChangeLogs(employeeNumber, memo, ipAddress, type, atFrom, atTo);
 
-    return CursorPageResponse.<ChangeLogDTO>builder()
-        .content(dtos)
-        .nextCursor(nextIdAfter != null ? ("{\\"id\\":" + nextIdAfter + "}") : null)
-        .nextIdAfter(nextIdAfter)
-        .size(size)
-        .totalElements(totalCount)
-        .hasNext(hasNext)
-        .build();
-  }
-
+  return CursorPageResponse.<ChangeLogDTO>builder()
+      .content(dtos)
+      .nextCursor(nextIdAfter != null ? ("{\"id\":" + nextIdAfter + "}") : null)
+      .nextIdAfter(nextIdAfter)
+      .size(size)
+      .totalElements(totalCount)
+      .hasNext(hasNext)
+      .build();
+}
 ```
+</details> 
 
 ### 결과
 
 - 운영자가 원하는 조건으로 안정적인 이력 조회 가능.
 - 커서 방식으로 스크롤형 페이지네이션 시 응답 안정성 확보.
-
+  
 ## 파일 구조
+<details>
+  <summary>파일구조 보기</summary>
+ 
 ```
 ├─src
   ├─main
@@ -326,6 +415,10 @@ historyRepository.saveAll(histories);
                   └─hrbank
                           HrBankApplicationTests.java
 ```
+</details>
+
+--- 
+
 ## 구현 홈페이지
 - 실제 배포 사이트 : [https://hrbank-production.up.rail](https://hrbank-production.up.railway.app/swagger-ui/index.html)
 - 배포 Swagger :  [Swagger](https://hrbank-production.up.railway.app/swagger-ui/index.html)
