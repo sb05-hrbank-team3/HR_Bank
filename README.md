@@ -1,3 +1,17 @@
+# HR_Bank 👨‍💼🏢
+**Batch 기반 인사 관리 시스템 (Open EMS)**  
+> 기업의 핵심 자산, **인적 자원**을 안전하고 효율적으로 관리하세요!  
+> 대용량 데이터를 안정적으로 처리할 수 있는 **Batch 시스템** 기반으로, 부서 및 직원 정보를 체계적으로 운영할 수 있습니다.  
+> 또한 **백업 자동화 · 이력 관리 · 대시보드 제공**을 통해 기업 인사 관리를 더욱 효과적으로 지원합니다. 📊💼  
+
+- **프로젝트 기간:** 2025.09.05 ~ 2025.09.16  
+- **API 명세서:** [Swagger UI 바로가기 ↗](https://hrbank-production.up.railway.app/swagger-ui/index.html)
+- **배포 사이트:** [바로가기 ↗](https://hrbank-production.up.railway.app/swagger-ui/index.html)
+
+
+
+
+
 # {팀이름}
 
 ![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white) [팀 협업 문서 링크](https://www.notion.so/2680fa6d0dae80f3b316ceff3494cfe2)
@@ -221,6 +235,68 @@ if (sortField.equals("establishedDate") && sortDirection.equals("desc")) {
   
 ---
 
+## 민재영
+## 대용량 다운로드 스트리밍 (메모리 OOM 방지)
+
+### 상황
+
+* 백업 CSV 파일, 프로필 이미지 등 대용량 파일을 안정적으로 다운로드해야 함.
+* 서버 메모리 사용 급증 없이 다수 동시 다운로드도 견딜 수 있어야 함.
+
+### 문제
+
+* byte[] 기반 응답은 파일 전체를 메모리에 적재 -> **OOM/GC** 부담 및 응답 지연
+* 필요 시 브라우저에서 파일명, 용량 정보 표시함.
+
+### 행동
+
+* InputStreamResource를 사용한 **스트리밍 응답**으로 전환
+* Content-Disposition/Content-Type/Content-Length 헤더를 정확히 세팅
+* 파일 실체는 LocalBinaryContentStorag에서 InputStream으로 바로 읽어 전송
+
+```java
+// LocalBinaryContentStorage
+@Override
+  public InputStream getFile(Long binaryContentId) {
+    Path filePath = findFileById(binaryContentId);
+    if (filePath == null || Files.notExists(filePath)) {
+      throw new NoSuchElementException("key가" + binaryContentId + "인 파일이 존재하지 않습니다.");
+    }
+    try {
+      return Files.newInputStream(filePath);
+    } catch (IOException e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
+    }
+  }
+  
+@Override
+  public ResponseEntity<Resource> downloadFile(BinaryContentDTO metaData) {
+    InputStream inputStream = getFile(metaData.id());
+    Resource resource = new InputStreamResource(inputStream);
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + metaData.name() + "\"")
+        .header(HttpHeaders.CONTENT_TYPE, metaData.contentType())
+        .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(metaData.size())).body(resource);
+  }
+
+// BinaryContentServiceImpl
+@Override
+  public ResponseEntity<Resource> downloadBinaryContent(Long id) {
+    BinaryContentDTO dto = getBinaryContent(id);
+    return storage.downloadFile(dto);
+  }
+```
+
+### 결과
+
+* 메모리 사용이 파일 크기 의존 -> 버퍼 크기 수준으로 감소, **OOM 방지**
+* 다운로드 시작 지연 단축
+* 브라우저 파일명 표시 가능
+
+---
+
 ## 박종현
 ## 페이지네이션 구현 (ChangeLog)
 
@@ -424,15 +500,15 @@ public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
 
 ### 상황
 
-- 일/주/월/분기/년 단위로 버킷(기간 단위 묶음)을 만들어 각 구간의 직원수 추이를 계산해야 함.
+* 일/주/월/분기/년 단위로 버킷(기간 단위 묶음)을 만들어 각 구간의 직원수 추이를 계산해야 함.
 
 ### 문제
 
-- 마지막 버킷의 끝 경계가 to를 넘거나 모자라서 하루가 중복/누락되는 사례 발생 -> 그래프가 한 칸 밀리거나 값이 과소/과대 집계됨
+* 마지막 버킷의 끝 경계가 to를 넘거나 모자라서 하루가 중복/누락되는 사례 발생 -> 그래프가 한 칸 밀리거나 값이 과소/과대 집계됨
 
 ### 행동
 
-- 마지막 버킷만 endExclusive = toDate.plusDays(1)로 보정하고, 스냅샷 기준일을 ref = endExclusive.minusDays(1)로 통일
+* 마지막 버킷만 endExclusive = toDate.plusDays(1)로 보정하고, 스냅샷 기준일을 ref = endExclusive.minusDays(1)로 통일
   
   ```java
 	LocalDate nextStart = bump(start, dateUnit);
@@ -443,8 +519,8 @@ public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
 
 ### 결과
 
-- 월/분기의 초반과 말에 값이 튀던 현상 제거
-- 그래프 안정성 ↑
+* 월/분기의 초반과 말에 값이 튀던 현상 제거
+* 그래프 안정성 ↑
   
 ---
 
@@ -452,20 +528,20 @@ public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
 
 ### 상황
 
-- 대시보드에 부서별 직원 분포를 보여줘야 함.
+* 대시보드에 부서별 직원 분포를 보여줘야 함.
 
 ### 문제
 
-- 부서별
-  - 초기에는 각 부서마다 employeeRepository.countByDepartmentAndStatus() 쿼리를 따로 호출되는 N+1 문제 발생 
-  - 결과적으로 DB 부하 증가 및 응답 속도 느려짐
+* 부서별
+	* 초기에는 각 부서마다 employeeRepository.countByDepartmentAndStatus() 쿼리를 따로 호출되는 N+1 문제 발생 
+  	* 결과적으로 DB 부하 증가 및 응답 속도 느려짐
 
 
  ### 행동
  
-- 부서별
-  - 모든 부서 ID를 한 번에 모아서 단일 쿼리로 카운트 가져오도록 변경
-  - ID 집합으로 모아 한번에 group by 조회
+* 부서별
+  * 모든 부서 ID를 한 번에 모아서 단일 쿼리로 카운트 가져오도록 변경
+  * ID 집합으로 모아 한번에 group by 조회
 
 	```java
 	Set<Long> deptIds = new HashSet<>();
@@ -474,9 +550,9 @@ public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
 	  ```
 
 ### 결과
-- 쿼리 호출 수 1회로 단축
-- 응답 속도 개션
-- 부서 개수가 늘어나도 성능 안정적 유지
+* 쿼리 호출 수 1회로 단축
+* 응답 속도 개션
+* 부서 개수가 늘어나도 성능 안정적 유지
   
 ---
 
