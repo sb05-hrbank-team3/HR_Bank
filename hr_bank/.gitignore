@@ -12,6 +12,11 @@
 .idea/**/dictionaries
 .idea/**/shelf
 
+# Spring Boot YML 파일 제외
+application.yml
+application-dev.yml
+application-prod.yml
+
 # AWS User-specific
 .idea/**/aws.xml
 

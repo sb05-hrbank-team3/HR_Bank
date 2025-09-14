@@ -118,10 +118,7 @@ public class DepartmentServiceImpl implements DepartmentService {
           "소속된 직원이 1명 이상이면 삭제가 불가능합니다: " + id
       );
     }
-
-
     departmentRepository.deleteById(id);
-
   }
 
   @Override

@@ -33,8 +33,6 @@ public class DepartmentQueryRepositoryImpl implements DepartmentQueryRepository 
       where.and(department.name.containsIgnoreCase(nameOrDescription)
           .or(department.description.containsIgnoreCase(nameOrDescription)));
     }
-
-    //커서 관련
     if (idAfter != null) {
       where.and(department.id.gt(idAfter));
     }
@@ -48,7 +46,6 @@ public class DepartmentQueryRepositoryImpl implements DepartmentQueryRepository 
           .orderBy(department.name.asc())
           .fetch();
     }
-
     if (sortField.equals("name") && sortDirection.equals("desc")) {
       return queryFactory
           .select(department)
@@ -58,7 +55,6 @@ public class DepartmentQueryRepositoryImpl implements DepartmentQueryRepository 
           .orderBy(department.name.desc())
           .fetch();
     }
-
     if (sortField.equals("establishedDate") && sortDirection.equals("desc")) {
       return queryFactory
           .select(department)
