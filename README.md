@@ -419,6 +419,33 @@ public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
 
 --- 
 
+## 이예림
+## 기간 단위별 직원 수 카운트
+
+### 상황
+
+- 일/주/월/분기/년 단위로 버킷(기간 단위 묶음)을 만들어 각 구간의 직원수 추이를 계산해야 함.
+
+### 문제
+
+- 마지막 버킷의 끝 경계가 to를 넘거나 모자라서 하루가 중복/누락되는 사례 발생 -> 그래프가 한 칸 밀리거나 값이 과소/과대 집계됨
+
+### 행동
+
+- 마지막 버킷만 endExclusive = toDate.plusDays(1)로 보정하고, 스냅샷 기준일을 ref = endExclusive.minusDays(1)로 통일
+  ```java
+  	LocalDate nextStart = bump(start, dateUnit);
+	LocalDate endExclusive = (i + 1 < starts.size()) ? nextStart : 		toDate.plusDays(1);
+	LocalDate ref = endExclusive.minusDays(1); // 구간 끝 하루
+	counts.add(employeeRepository.countEmployeesAt(ref));
+```
+
+### 결과
+
+- 월/분기의 초반과 말에 값이 튀던 현상 제거
+- 그래프 안정성 ↑
+  
+---
 ## 구현 홈페이지
 - 실제 배포 사이트 : [https://hrbank-production.up.rail](https://hrbank-production.up.railway.app/swagger-ui/index.html)
 - 배포 Swagger :  [Swagger](https://hrbank-production.up.railway.app/swagger-ui/index.html)
