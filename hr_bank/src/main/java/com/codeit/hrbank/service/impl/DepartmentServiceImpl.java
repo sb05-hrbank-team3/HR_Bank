@@ -114,9 +114,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         .anyMatch(e -> e.getDepartment().getId().equals(id));
 
     if (exists) {
-      throw new IllegalStateException(
-          "소속된 직원이 1명 이상이면 삭제가 불가능합니다: " + id
-      );
+      throw new IllegalStateException("소속된 직원이 1명 이상이면 삭제가 불가능합니다");
     }
 
 
