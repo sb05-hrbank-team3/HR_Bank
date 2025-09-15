@@ -85,6 +85,112 @@ CREATE TABLE backups
             ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+--batch용
+-- ===============================
+-- Create Spring Batch tables (PostgreSQL, Spring Batch 5.x)
+-- ===============================
+-- ===============================
+-- Create sequences
+-- ===============================
+CREATE SEQUENCE BATCH_JOB_INSTANCE_SEQ START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE BATCH_JOB_EXECUTION_SEQ START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE BATCH_STEP_EXECUTION_SEQ START WITH 1 INCREMENT BY 1;
+
+-- ===============================
+-- 2. Create tables
+-- ===============================
+
+
+-- Job Instance
+CREATE TABLE BATCH_JOB_INSTANCE (
+                                    JOB_INSTANCE_ID BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('BATCH_JOB_INSTANCE_SEQ'),
+                                    VERSION BIGINT,
+                                    JOB_NAME VARCHAR(100) NOT NULL,
+                                    JOB_KEY VARCHAR(32) NOT NULL,
+                                    UNIQUE (JOB_NAME, JOB_KEY)
+);
+
+-- Job Execution
+CREATE TABLE BATCH_JOB_EXECUTION (
+                                     JOB_EXECUTION_ID BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('BATCH_JOB_EXECUTION_SEQ'),
+                                     VERSION BIGINT NOT NULL,
+                                     JOB_INSTANCE_ID BIGINT NOT NULL,
+                                     CREATE_TIME TIMESTAMP NOT NULL,
+                                     START_TIME TIMESTAMP,
+                                     END_TIME TIMESTAMP,
+                                     STATUS VARCHAR(10),
+                                     EXIT_CODE VARCHAR(20),
+                                     EXIT_MESSAGE VARCHAR(2500),
+                                     LAST_UPDATED TIMESTAMP,
+                                     JOB_CONFIGURATION_LOCATION VARCHAR(2500),
+                                     CONSTRAINT JOB_INST_EXEC_FK FOREIGN KEY(JOB_INSTANCE_ID)
+                                         REFERENCES BATCH_JOB_INSTANCE(JOB_INSTANCE_ID)
+);
+
+-- Job Execution Parameters (Spring Batch 5.x)
+CREATE TABLE BATCH_JOB_EXECUTION_PARAMS (
+                                            JOB_EXECUTION_ID BIGINT NOT NULL,
+                                            PARAMETER_NAME VARCHAR(100) NOT NULL,
+                                            PARAMETER_TYPE VARCHAR(1000) NOT NULL,
+                                            PARAMETER_VALUE VARCHAR(2500),
+                                            IDENTIFYING CHAR(1) NOT NULL,
+                                            CONSTRAINT JOB_EXEC_PARAMS_FK FOREIGN KEY(JOB_EXECUTION_ID)
+                                                REFERENCES BATCH_JOB_EXECUTION(JOB_EXECUTION_ID)
+);
+
+-- Step Execution
+CREATE TABLE BATCH_STEP_EXECUTION (
+                                      STEP_EXECUTION_ID BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('BATCH_STEP_EXECUTION_SEQ'),
+                                      VERSION BIGINT NOT NULL,
+                                      STEP_NAME VARCHAR(100) NOT NULL,
+                                      JOB_EXECUTION_ID BIGINT NOT NULL,
+                                      START_TIME TIMESTAMP NOT NULL,
+                                      END_TIME TIMESTAMP,
+                                      STATUS VARCHAR(10),
+                                      COMMIT_COUNT BIGINT,
+                                      READ_COUNT BIGINT,
+                                      FILTER_COUNT BIGINT,
+                                      WRITE_COUNT BIGINT,
+                                      EXIT_CODE VARCHAR(20),
+                                      EXIT_MESSAGE VARCHAR(2500),
+                                      LAST_UPDATED TIMESTAMP,
+                                      CONSTRAINT STEP_EXEC_JOB_FK FOREIGN KEY(JOB_EXECUTION_ID)
+                                          REFERENCES BATCH_JOB_EXECUTION(JOB_EXECUTION_ID)
+);
+
+-- Step Execution Context
+CREATE TABLE BATCH_STEP_EXECUTION_CONTEXT (
+                                              STEP_EXECUTION_ID BIGINT NOT NULL PRIMARY KEY,
+                                              SHORT_CONTEXT VARCHAR(2500) NOT NULL,
+                                              SERIALIZED_CONTEXT TEXT,
+                                              CONSTRAINT STEP_EXEC_CTX_FK FOREIGN KEY(STEP_EXECUTION_ID)
+                                                  REFERENCES BATCH_STEP_EXECUTION(STEP_EXECUTION_ID)
+);
+
+-- Job Execution Context
+CREATE TABLE BATCH_JOB_EXECUTION_CONTEXT (
+                                             JOB_EXECUTION_ID BIGINT NOT NULL PRIMARY KEY,
+                                             SHORT_CONTEXT VARCHAR(2500) NOT NULL,
+                                             SERIALIZED_CONTEXT TEXT,
+                                             CONSTRAINT JOB_EXEC_CTX_FK FOREIGN KEY(JOB_EXECUTION_ID)
+                                                 REFERENCES BATCH_JOB_EXECUTION(JOB_EXECUTION_ID)
+);
+
+-- ===============================
+-- Drop existing Spring Batch tables and sequences
+-- ===============================
+-- DROP TABLE IF EXISTS batch_job_execution_context CASCADE;
+-- DROP TABLE IF EXISTS batch_step_execution_context CASCADE;
+-- DROP TABLE IF EXISTS batch_step_execution CASCADE;
+-- DROP TABLE IF EXISTS batch_job_execution_params CASCADE;
+-- DROP TABLE IF EXISTS batch_job_execution CASCADE;
+-- DROP TABLE IF EXISTS batch_job_instance CASCADE;
+--
+-- DROP SEQUENCE IF EXISTS batch_job_instance_seq;
+-- DROP SEQUENCE IF EXISTS batch_job_execution_seq;
+-- DROP SEQUENCE IF EXISTS batch_step_execution_seq;
+
+
 -- -- -- 하위 테이블부터 삭제
 -- DROP TABLE IF EXISTS histories CASCADE;
 -- DROP TABLE IF EXISTS change_logs CASCADE;
@@ -115,3 +221,4 @@ CREATE TABLE backups
 -- GRANT ALL PRIVILEGES ON SCHEMA public TO hrbank_user;
 --
 -- GRANT hrbank_role TO hrbank_user;
+
