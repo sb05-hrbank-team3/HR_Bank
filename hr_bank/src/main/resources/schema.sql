@@ -85,6 +85,8 @@ CREATE TABLE backups
             ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE INDEX idx_employee_name_id ON employees(name ASC, id ASC);
+
 -- -- -- 하위 테이블부터 삭제
 -- DROP TABLE IF EXISTS histories CASCADE;
 -- DROP TABLE IF EXISTS change_logs CASCADE;
