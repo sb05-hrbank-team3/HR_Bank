@@ -90,7 +90,7 @@ public class EmployeeController {
   ) {
     CursorPageResponse<EmployeeDTO> response = employeeService.findAllByPart(
         nameOrEmail, employeeNumber, departmentName, position, hireDateFrom, hireDateTo, status,
-        idAfter, size, sortField, sortDirection);
+        idAfter,cursor, size, sortField, sortDirection);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
