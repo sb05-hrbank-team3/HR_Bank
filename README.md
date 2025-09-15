@@ -17,45 +17,74 @@
 
 <br>
 
-## 🧑🏻‍💻 팀원 구성
-<div align="center">
+<h2>👩🏻‍💻 팀원 구성</h2>
 
-| 이름  | 역할          | 설명                                             | GitHub 주소                              |
-| --- | ----------- | ---------------------------------------------- | -------------------------------------- |
-| 남현수 | (팀장) 백엔드 개발자     | 직원 관리 시스템 엔티티 설계 및 구현, CI/CD 파이프라인 구축, 환경변수 관리 | [GitHub](https://github.com/Namsoo315) |
-| 류승민 | 백엔드 개발자     | 부서 관리 및 데이터 백업 시스템 개발, Batch 처리 및 스케줄링 담당      | [GitHub](https://github.com/bustam00)  |
-| 박종현 | 백엔드 개발자     | 수정 로그 시스템 개발, ERD 설계 및 코드 리팩터링                 | [GitHub](https://github.com/yeahlimm)  |
-| 이예림 | 백엔드/프론트 개발자 | 프론트엔드와 수정 상세 내역 조회 기능 개발, PPT 및 작업 흐름도 제작      | [GitHub](https://github.com/Namsoo315) |
-| 민재영 | 백엔드/프론트 개발자 | 프론트엔드 및 데이터 백업 기능 개발, 파일 스토리지 설정 및 관리          | [GitHub](https://github.com/jymin0)    |
-
-</div>
+<table>
+  <tr>
+    <th>이름</th>
+    <th>역할</th>
+    <th>설명</th>
+    <th>GitHub 주소</th>
+  </tr>
+  <tr>
+    <td><b>남현수</b></td>
+    <td>(팀장) 백엔드 개발자</td>
+    <td>직원 관리 시스템 엔티티 설계 및 구현, CI/CD 파이프라인 구축, 환경변수 관리</td>
+    <td><a href="https://github.com/Namsoo315">GitHub</a></td>
+  </tr>
+  <tr>
+    <td><b>류승민</b></td>
+    <td>백엔드 개발자</td>
+    <td>부서 관리 및 데이터 백업 시스템 개발, Batch 처리 및 스케줄링 담당</td>
+    <td><a href="https://github.com/bust">GitHub</a></td>
+  </tr>
+  <tr>
+    <td><b>박종현</b></td>
+    <td>백엔드 개발자</td>
+    <td>수정 로그 시스템 개발, ERD 설계 및 코드 리팩터링</td>
+    <td><a href="https://github.com/jonghyun">GitHub</a></td>
+  </tr>
+  <tr>
+    <td><b>이예림</b></td>
+    <td>백엔드/프론트엔드 개발자</td>
+    <td>프론트엔드와 수정 상세 내역 조회 기능 개발, PPT 및 작업 흐름도 제작</td>
+    <td><a href="https://github.com/yeahlimm">GitHub</a></td>
+  </tr>
+  <tr>
+    <td><b>민재영</b></td>
+    <td>백엔드/프론트엔드 개발자</td>
+    <td>프론트엔드 및 데이터 백업 기능 개발, 파일 스토리지 설정 및 관리</td>
+    <td><a href="https://github.com/minjaeyoung">GitHub</a></td>
+  </tr>
+</table>
 
 
 <br>
 
-## 🔧 기술 스택
+## 🛠 기술 스택
 
-#### Frontend
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+### 🎨 Frontend
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) 
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black) 
 
-#### Backend  
-![Spring Boot](https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+### ⚙️ Backend
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
 ![MapStruct](https://img.shields.io/badge/MapStruct-000000?style=for-the-badge&logo=mapstruct&logoColor=white)
-![Spring Data JPA](https://img.shields.io/badge/JPA-59666C?style=for-the-badge&logo=hibernate&logoColor=white)
+![JPA](https://img.shields.io/badge/JPA-59666C?style=for-the-badge&logo=hibernate&logoColor=white)
 
-#### Database  
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
-![H2](https://img.shields.io/badge/H2-004088?style=for-the-badge&logo=h2&logoColor=white)
+### 🗄 Database
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white) 
+![H2](https://img.shields.io/badge/H2-003B57?style=for-the-badge&logo=h2&logoColor=white)
 
-#### CI/CD  
-![Railway](https://img.shields.io/badge/Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white)
+### 🚀 CI/CD
+![Railway](https://img.shields.io/badge/Railway-000000?style=for-the-badge&logo=railway&logoColor=white)
 
-#### 협업 Tool  
-![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
-![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
-![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white)
+### 🤝 협업 Tool
+![Git](https://img.shields.io/badge/Git-F05033?style=for-the-badge&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white) 
+![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white) 
 ![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)
+
 
 <br>
 
@@ -197,8 +226,9 @@
 ```
 
 ### - 시스템 아키텍처
-<img width="1050" height="725" alt="Image" src="https://github.com/user-attachments/assets/ff1723d8-233e-4ac8-ae09-f949a013ff11" />
+<img width="950" height="656" alt="Image" src="https://github.com/user-attachments/assets/ff1723d8-233e-4ac8-ae09-f949a013ff11" />
 
+<br>
 <br>
 
 ## 📎 팀원별 구현 기능 상세
@@ -501,7 +531,7 @@ public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
 
 **📍 Action**
 
-* 마지막 버킷만 endExclusive = toDate.plusDays(1)로 보정하고, 스냅샷 기준일을 ref = endExclusive.minusDays(1)로 통일
+* 마지막 버킷만 `endExclusive = toDate.plusDays(1)`로 보정하고, 스냅샷 기준일을 `ref = endExclusive.minusDays(1)`로 통일
   
   ```java
 	LocalDate nextStart = bump(start, dateUnit);
@@ -515,6 +545,93 @@ public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
 * 월/분기의 초반과 말에 값이 튀던 현상 제거
 * 그래프 안정성 ↑
 </details>
+<br>
+
+### - 부서별/직함별 직원 수 집계
+
+	
+**📍 Situation**
+
+- 대시보드에 부서별/직함별 직원 분포를 보여줘야 함. 
+
+**📍 Task**
+
+* 부서별 : 초기에는 각 부서마다 `employeeRepository.countByDepartmntAndStatus()` 쿼리를 따로 호출했음 -> N+1문제 발생
+* 직함별 : 직무 목록을 구한 뒤 직무마다 count 쿼리를 호출하면 부서 개수만큼 쿼리 실행됨 -> N+1 문제 발생
+
+**📍 Action**
+
+* 부서별
+	*  모든 부서 ID를 한 번에 모아서 단일 쿼리로 카운트 가져오도록 변경
+ 	*  ID 집합으로 모아 한번에 groupby 조회	  
+  
+  ```java
+  
+  	// EmployeeAnalyticsServiceImpl : distributionByDepartment 메서드
+	Set<Long> deptIds = new HashSet<>();
+	departments.forEach(d -> deptIds.add(d.getId()));
+	Map<Long, Long> counts = employeeRepository.countEmployeesByDepartmentIds(status, deptIds);
+
+  	//EmployeeQueryRepositoryImp
+	  @Override
+	  public Map<Long, Long> countEmployeesByDepartmentIds(EmployeeStatus status,
+	      Set<Long> departmentIds) {
+	    if(departmentIds == null || departmentIds.isEmpty()) return Collections.emptyMap();
+	
+	    QEmployee employee = QEmployee.employee;
+	    List<Tuple> rows = queryFactory.select(employee.department.id, employee.count())
+	        .from(employee)
+	        .where(
+	            employee.status.eq(status),
+	            employee.department.id.in(departmentIds)
+	        )
+	        .groupBy(employee.department.id)
+	        .fetch();
+	
+	    return rows.stream().collect(Collectors.toMap(
+	        t -> t.get(0, Long.class),
+	        t -> t.get(1, Long.class)
+	    ));
+	  }
+
+  ```
+* 직함별
+	* Repository에서 `countEmployeesGroupByPosition(status)`로 한 번의 GROUP BY 쿼리로 모든 직무별 인원을 가져옴.
+ 	* 총 직원 수는 `countEmployeesByStatus(status)`로 별도 1회 조회
+    
+    ```java
+  	//EmployeeQueryRepositoryImp
+	  @Override
+	  public List<Tuple> countEmployeesGroupByPosition(EmployeeStatus status) {
+	    QEmployee employee = QEmployee.employee;
+	    return queryFactory
+	        .select(employee.position, employee.count())
+	        .from(employee)
+	        .where(employee.status.eq(status))
+	        .groupBy(employee.position)
+	        .orderBy(employee.count().desc())
+	        .fetch();
+	  }
+
+	   @Override
+	   public Long countEmployeesByStatus(EmployeeStatus status) {
+	    QEmployee employee = QEmployee.employee;
+	    return queryFactory
+	        .select(employee.count())
+	        .from(employee)
+	        .where(employee.status.eq(status))
+	        .fetchOne();
+	  }
+
+  ```
+
+
+**📍 Result**
+
+* 쿼리 호출 수 1회로 단축
+* 응답 속도 개선
+* 부서와 직함의 개수가 늘어나도 성능 안정적 유지
+
 <br>
 
 ---
