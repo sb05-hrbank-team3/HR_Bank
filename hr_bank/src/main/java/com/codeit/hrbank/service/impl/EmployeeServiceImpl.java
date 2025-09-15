@@ -48,7 +48,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   @Transactional
-  public EmployeeDTO createEmployee(EmployeeCreateRequest request, MultipartFile profile, String ipAddress) {
+  public EmployeeDTO createEmployee(EmployeeCreateRequest request, MultipartFile profile,
+      String ipAddress) {
     if (employeeRepository.existsByEmail(request.email())) {
       throw new IllegalArgumentException("중복되는 이메일이 있습니다.");
     }
@@ -69,7 +70,8 @@ public class EmployeeServiceImpl implements EmployeeService {
           .build();
       binaryContentRepository.save(binaryContent);
       try {
-        binaryContentStorage.putFile(binaryContent.getId(), profile.getBytes(), binaryContent.getName());
+        binaryContentStorage.putFile(binaryContent.getId(), profile.getBytes(),
+            binaryContent.getName());
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
@@ -85,12 +87,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         .status(EmployeeStatus.ACTIVE)
         .binaryContent(binaryContent)
         .build();
-    
+
     // 영속성 컨텍스트를 위한.
     Employee savedEmployee = employeeRepository.save(employee);
 
     // ChangeLog + History
-    ChangeLog changeLog = ChangeLogUtils.createChangeLog(ChangeLogType.CREATED, ipAddress, request.memo(), savedEmployee);
+    ChangeLog changeLog = ChangeLogUtils.createChangeLog(ChangeLogType.CREATED, ipAddress,
+        request.memo(), savedEmployee);
     changeLogRepository.save(changeLog);
 
     List<History> histories = ChangeLogUtils.createHistoriesForCreate(changeLog, savedEmployee);
@@ -134,7 +137,8 @@ public class EmployeeServiceImpl implements EmployeeService {
       binaryContentRepository.save(binaryContent);
 
       try {
-        binaryContentStorage.putFile(binaryContent.getId(), profile.getBytes(), binaryContent.getName());
+        binaryContentStorage.putFile(binaryContent.getId(), profile.getBytes(),
+            binaryContent.getName());
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
@@ -157,10 +161,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     Employee savedEmployee = employeeRepository.save(updatedEmployee);
 
     // ChangeLog + History 생성
-    ChangeLog changeLog = ChangeLogUtils.createChangeLog(ChangeLogType.UPDATED, ipAddress, request.memo(), savedEmployee);
+    ChangeLog changeLog = ChangeLogUtils.createChangeLog(ChangeLogType.UPDATED, ipAddress,
+        request.memo(), savedEmployee);
     changeLogRepository.save(changeLog);
 
-    List<History> histories = ChangeLogUtils.createHistoriesForUpdate(changeLog, oldEmployee, savedEmployee);
+    List<History> histories = ChangeLogUtils.createHistoriesForUpdate(changeLog, oldEmployee,
+        savedEmployee);
     if (!histories.isEmpty()) {
       historyRepository.saveAll(histories);
     }
@@ -176,16 +182,17 @@ public class EmployeeServiceImpl implements EmployeeService {
       binaryContentRepository.deleteById(employee.getBinaryContent().getId());
       binaryContentStorage.deleteFile(employee.getBinaryContent().getId());
     }
-      employeeRepository.deleteById(employee.getId());
+    employeeRepository.deleteById(employee.getId());
   }
 
   @Override
   @Transactional
-  public Employee deleteEmployeeDoSaveLog(Long employeeId, String ipAddress){
+  public Employee deleteEmployeeDoSaveLog(Long employeeId, String ipAddress) {
     Employee employee = employeeRepository.findByIdWithRelations(employeeId)
         .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
 
-    ChangeLog changeLog = ChangeLogUtils.createChangeLog(ChangeLogType.DELETED, ipAddress, null, employee);
+    ChangeLog changeLog = ChangeLogUtils.createChangeLog(ChangeLogType.DELETED, ipAddress, null,
+        employee);
     changeLogRepository.save(changeLog);
     changeLogRepository.unlinkEmployee(employee);
     List<History> histories = ChangeLogUtils.createHistoriesForDelete(changeLog, employee);
@@ -198,11 +205,12 @@ public class EmployeeServiceImpl implements EmployeeService {
   @Transactional(readOnly = true)
   public CursorPageResponse<EmployeeDTO> findAllByPart(String nameOrEmail, String employeeNumber,
       String departmentName, String position, LocalDate hireDateFrom, LocalDate hireDateTo,
-      EmployeeStatus status, Long idAfter, Integer size, String sortField, String sortDirection) {
+      EmployeeStatus status, Long idAfter, String cursor, Integer size, String sortField,
+      String sortDirection) {
 
     List<Employee> employees = employeeRepository.findAllQEmployeesPart(
         nameOrEmail, employeeNumber, departmentName, position,
-        hireDateFrom, hireDateTo, status, idAfter, size, sortField, sortDirection
+        hireDateFrom, hireDateTo, status, idAfter, cursor, size, sortField, sortDirection
     );
 
     boolean hasNext = employees.size() > size;
@@ -217,8 +225,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     Long nextIdAfter = null;
     String nextCursor = null;
     if (!employees.isEmpty()) {
-      nextIdAfter = employees.get(employees.size() - 1).getId();
-      nextCursor = String.valueOf(nextIdAfter);
+      Employee lastEmployee = employees.get(employees.size() - 1);
+      nextIdAfter = lastEmployee.getId();
+
+      nextCursor = switch (sortField) {
+        case "name" -> lastEmployee.getName();
+        case "email" -> lastEmployee.getEmail();
+        case "employeeNumber" -> lastEmployee.getEmployeeNumber();
+        default -> String.valueOf(lastEmployee.getId());
+      };
     }
 
     return pageResponseMapper.fromCursor(employeeDTOs, size, nextCursor, nextIdAfter, hasNext);

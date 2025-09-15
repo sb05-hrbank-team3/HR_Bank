@@ -1,5 +1,6 @@
 package com.codeit.hrbank.exception;
 
+import com.codeit.hrbank.dto.response.ErrorResponse;
 import java.io.FileNotFoundException;
 import java.util.NoSuchElementException;
 import org.springframework.http.HttpStatus;
@@ -10,28 +11,33 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+  private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus status, String message, String details) {
+    ErrorResponse response = ErrorResponse.of(status.value(), message, details);
+    return ResponseEntity.status(status).body(response);
+  }
+
   // 전역 예외 처리
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<String> handleException(Exception e) {
+  public ResponseEntity<ErrorResponse> handleException(Exception e) {
     // 500 Internal Server Error
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage() + "오류");
+    return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getClass().getSimpleName(), e.getMessage());
   }
 
   @ExceptionHandler(IllegalArgumentException.class)
-  public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+  public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
     // 400 Bad Request
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage() + "오류");
+    return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getClass().getSimpleName(), e.getMessage());
   }
 
   @ExceptionHandler(NoSuchElementException.class)
-  public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException e) {
+  public ResponseEntity<ErrorResponse> handleNoSuchElementException(NoSuchElementException e) {
     // 404 Not Found
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage() + "오류");
+    return buildErrorResponse(HttpStatus.NOT_FOUND, e.getClass().getSimpleName(), e.getMessage());
   }
 
   @ExceptionHandler(FileNotFoundException.class)
-  public ResponseEntity<String> handleFileNotFoundException(FileNotFoundException e) {
+  public ResponseEntity<ErrorResponse> handleFileNotFoundException(FileNotFoundException e) {
     // 404 Not Found
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage() + "오류");
+    return buildErrorResponse(HttpStatus.NOT_FOUND, e.getClass().getSimpleName(), e.getMessage());
   }
 }
