@@ -85,21 +85,13 @@ CREATE TABLE backups
             ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE INDEX idx_employee_name_id ON employees(name ASC, id ASC);
 
 --batch용
--- ===============================
--- Create Spring Batch tables (PostgreSQL, Spring Batch 5.x)
--- ===============================
--- ===============================
--- Create sequences
--- ===============================
+CREATE SEQUENCE BATCH_JOB_SEQ START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE BATCH_JOB_INSTANCE_SEQ START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE BATCH_JOB_EXECUTION_SEQ START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE BATCH_STEP_EXECUTION_SEQ START WITH 1 INCREMENT BY 1;
-
--- ===============================
--- 2. Create tables
--- ===============================
 
 
 -- Job Instance
@@ -139,23 +131,27 @@ CREATE TABLE BATCH_JOB_EXECUTION_PARAMS (
                                                 REFERENCES BATCH_JOB_EXECUTION(JOB_EXECUTION_ID)
 );
 
--- Step Execution
 CREATE TABLE BATCH_STEP_EXECUTION (
                                       STEP_EXECUTION_ID BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('BATCH_STEP_EXECUTION_SEQ'),
                                       VERSION BIGINT NOT NULL,
                                       STEP_NAME VARCHAR(100) NOT NULL,
                                       JOB_EXECUTION_ID BIGINT NOT NULL,
-                                      START_TIME TIMESTAMP NOT NULL,
+                                      START_TIME TIMESTAMP,
                                       END_TIME TIMESTAMP,
                                       STATUS VARCHAR(10),
                                       COMMIT_COUNT BIGINT,
                                       READ_COUNT BIGINT,
                                       FILTER_COUNT BIGINT,
                                       WRITE_COUNT BIGINT,
-                                      EXIT_CODE VARCHAR(20),
+                                      EXIT_CODE VARCHAR(100),
                                       EXIT_MESSAGE VARCHAR(2500),
+                                      READ_SKIP_COUNT BIGINT,
+                                      WRITE_SKIP_COUNT BIGINT,
+                                      PROCESS_SKIP_COUNT BIGINT,
+                                      ROLLBACK_COUNT BIGINT,
                                       LAST_UPDATED TIMESTAMP,
-                                      CONSTRAINT STEP_EXEC_JOB_FK FOREIGN KEY(JOB_EXECUTION_ID)
+                                      CREATE_TIME TIMESTAMP,
+                                      CONSTRAINT JOB_EXECUTION_FK FOREIGN KEY (JOB_EXECUTION_ID)
                                           REFERENCES BATCH_JOB_EXECUTION(JOB_EXECUTION_ID)
 );
 
@@ -176,6 +172,3 @@ CREATE TABLE BATCH_JOB_EXECUTION_CONTEXT (
                                              CONSTRAINT JOB_EXEC_CTX_FK FOREIGN KEY(JOB_EXECUTION_ID)
                                                  REFERENCES BATCH_JOB_EXECUTION(JOB_EXECUTION_ID)
 );
-
-CREATE INDEX idx_employee_name_id ON employees(name ASC, id ASC);
-
