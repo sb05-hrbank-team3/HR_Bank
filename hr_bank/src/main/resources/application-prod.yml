@@ -26,7 +26,7 @@ spring:
 
 # application-prod.yml
 swagger:
-  server-url: https://hrbank-production.up.railway.app/
+  server-url: https://hr-bank-service-production.up.railway.app/
 
 hrbank:
   storage:
