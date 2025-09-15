@@ -7,7 +7,7 @@ spring:
 
   # Batch 초기화 스크립트 생략
     jdbc:
-      initialize-schema: never
+      initialize-schema: always
 
 # 로깅
 logging:

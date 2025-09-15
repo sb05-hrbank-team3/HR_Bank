@@ -85,21 +85,13 @@ CREATE TABLE backups
             ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE INDEX idx_employee_name_id ON employees(name ASC, id ASC);
 
 --batch용
--- ===============================
--- Create Spring Batch tables (PostgreSQL, Spring Batch 5.x)
--- ===============================
--- ===============================
--- Create sequences
--- ===============================
+CREATE SEQUENCE BATCH_JOB_SEQ START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE BATCH_JOB_INSTANCE_SEQ START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE BATCH_JOB_EXECUTION_SEQ START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE BATCH_STEP_EXECUTION_SEQ START WITH 1 INCREMENT BY 1;
-
--- ===============================
--- 2. Create tables
--- ===============================
 
 
 -- Job Instance
@@ -139,23 +131,27 @@ CREATE TABLE BATCH_JOB_EXECUTION_PARAMS (
                                                 REFERENCES BATCH_JOB_EXECUTION(JOB_EXECUTION_ID)
 );
 
--- Step Execution
 CREATE TABLE BATCH_STEP_EXECUTION (
                                       STEP_EXECUTION_ID BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('BATCH_STEP_EXECUTION_SEQ'),
                                       VERSION BIGINT NOT NULL,
                                       STEP_NAME VARCHAR(100) NOT NULL,
                                       JOB_EXECUTION_ID BIGINT NOT NULL,
-                                      START_TIME TIMESTAMP NOT NULL,
+                                      START_TIME TIMESTAMP,
                                       END_TIME TIMESTAMP,
                                       STATUS VARCHAR(10),
                                       COMMIT_COUNT BIGINT,
                                       READ_COUNT BIGINT,
                                       FILTER_COUNT BIGINT,
                                       WRITE_COUNT BIGINT,
-                                      EXIT_CODE VARCHAR(20),
+                                      EXIT_CODE VARCHAR(100),
                                       EXIT_MESSAGE VARCHAR(2500),
+                                      READ_SKIP_COUNT BIGINT,
+                                      WRITE_SKIP_COUNT BIGINT,
+                                      PROCESS_SKIP_COUNT BIGINT,
+                                      ROLLBACK_COUNT BIGINT,
                                       LAST_UPDATED TIMESTAMP,
-                                      CONSTRAINT STEP_EXEC_JOB_FK FOREIGN KEY(JOB_EXECUTION_ID)
+                                      CREATE_TIME TIMESTAMP,
+                                      CONSTRAINT JOB_EXECUTION_FK FOREIGN KEY (JOB_EXECUTION_ID)
                                           REFERENCES BATCH_JOB_EXECUTION(JOB_EXECUTION_ID)
 );
 
@@ -176,53 +172,3 @@ CREATE TABLE BATCH_JOB_EXECUTION_CONTEXT (
                                              CONSTRAINT JOB_EXEC_CTX_FK FOREIGN KEY(JOB_EXECUTION_ID)
                                                  REFERENCES BATCH_JOB_EXECUTION(JOB_EXECUTION_ID)
 );
-
--- ===============================
--- Drop existing Spring Batch tables and sequences
--- ===============================
--- DROP TABLE IF EXISTS batch_job_execution_context CASCADE;
--- DROP TABLE IF EXISTS batch_step_execution_context CASCADE;
--- DROP TABLE IF EXISTS batch_step_execution CASCADE;
--- DROP TABLE IF EXISTS batch_job_execution_params CASCADE;
--- DROP TABLE IF EXISTS batch_job_execution CASCADE;
--- DROP TABLE IF EXISTS batch_job_instance CASCADE;
---
--- DROP SEQUENCE IF EXISTS batch_job_instance_seq;
--- DROP SEQUENCE IF EXISTS batch_job_execution_seq;
--- DROP SEQUENCE IF EXISTS batch_step_execution_seq;
-
-
-CREATE INDEX idx_employee_name_id ON employees(name ASC, id ASC);
-
-
--- -- -- 하위 테이블부터 삭제
--- DROP TABLE IF EXISTS histories CASCADE;
--- DROP TABLE IF EXISTS change_logs CASCADE;
--- DROP TABLE IF EXISTS backups CASCADE;
--- DROP TABLE IF EXISTS employees CASCADE;
--- DROP TABLE IF EXISTS binary_contents CASCADE;
--- DROP TABLE IF EXISTS departments CASCADE;
---
---
--- -- 전체 데이터 삭제
--- TRUNCATE TABLE histories CASCADE;
--- TRUNCATE TABLE change_logs CASCADE;
--- TRUNCATE TABLE backups CASCADE;
--- TRUNCATE TABLE employees CASCADE;
--- TRUNCATE TABLE binary_contents CASCADE;
--- TRUNCATE TABLE departments CASCADE;
---
--- CREATE USER hrbank_user WITH PASSWORD 'hrbank_1234';
--- GRANT ALL PRIVILEGES ON DATABASE hrbank TO hrbank_user;
--- -- ROLE이 모든 테이블/시퀀스 권한 가짐
--- GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO hrbank_role;
--- GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO hrbank_role;
---
--- -- 앞으로 생성될 테이블/시퀀스도 자동 권한 부여
--- ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO hrbank_role;
--- ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO hrbank_role;
---
--- GRANT ALL PRIVILEGES ON SCHEMA public TO hrbank_user;
---
--- GRANT hrbank_role TO hrbank_user;
-

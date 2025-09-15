@@ -197,8 +197,9 @@
 ```
 
 ### - 시스템 아키텍처
-<img width="1050" height="725" alt="Image" src="https://github.com/user-attachments/assets/ff1723d8-233e-4ac8-ae09-f949a013ff11" />
+<img width="950" height="656" alt="Image" src="https://github.com/user-attachments/assets/ff1723d8-233e-4ac8-ae09-f949a013ff11" />
 
+<br>
 <br>
 
 ## 📎 팀원별 구현 기능 상세
@@ -501,7 +502,7 @@ public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
 
 **📍 Action**
 
-* 마지막 버킷만 endExclusive = toDate.plusDays(1)로 보정하고, 스냅샷 기준일을 ref = endExclusive.minusDays(1)로 통일
+* 마지막 버킷만 `endExclusive = toDate.plusDays(1)`로 보정하고, 스냅샷 기준일을 `ref = endExclusive.minusDays(1)`로 통일
   
   ```java
 	LocalDate nextStart = bump(start, dateUnit);
@@ -515,6 +516,93 @@ public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
 * 월/분기의 초반과 말에 값이 튀던 현상 제거
 * 그래프 안정성 ↑
 </details>
+<br>
+
+### - 부서별/직함별 직원 수 집계
+
+	
+**📍 Situation**
+
+- 대시보드에 부서별/직함별 직원 분포를 보여줘야 함. 
+
+**📍 Task**
+
+* 부서별 : 초기에는 각 부서마다 `employeeRepository.countByDepartmntAndStatus()` 쿼리를 따로 호출했음 -> N+1문제 발생
+* 직함별 : 직무 목록을 구한 뒤 직무마다 count 쿼리를 호출하면 부서 개수만큼 쿼리 실행됨 -> N+1 문제 발생
+
+**📍 Action**
+
+* 부서별
+	*  모든 부서 ID를 한 번에 모아서 단일 쿼리로 카운트 가져오도록 변경
+ 	*  ID 집합으로 모아 한번에 groupby 조회	  
+  
+  ```java
+  
+  	// EmployeeAnalyticsServiceImpl : distributionByDepartment 메서드
+	Set<Long> deptIds = new HashSet<>();
+	departments.forEach(d -> deptIds.add(d.getId()));
+	Map<Long, Long> counts = employeeRepository.countEmployeesByDepartmentIds(status, deptIds);
+
+  	//EmployeeQueryRepositoryImp
+	  @Override
+	  public Map<Long, Long> countEmployeesByDepartmentIds(EmployeeStatus status,
+	      Set<Long> departmentIds) {
+	    if(departmentIds == null || departmentIds.isEmpty()) return Collections.emptyMap();
+	
+	    QEmployee employee = QEmployee.employee;
+	    List<Tuple> rows = queryFactory.select(employee.department.id, employee.count())
+	        .from(employee)
+	        .where(
+	            employee.status.eq(status),
+	            employee.department.id.in(departmentIds)
+	        )
+	        .groupBy(employee.department.id)
+	        .fetch();
+	
+	    return rows.stream().collect(Collectors.toMap(
+	        t -> t.get(0, Long.class),
+	        t -> t.get(1, Long.class)
+	    ));
+	  }
+
+  ```
+* 직함별
+	* Repository에서 `countEmployeesGroupByPosition(status)`로 한 번의 GROUP BY 쿼리로 모든 직무별 인원을 가져옴.
+ 	* 총 직원 수는 `countEmployeesByStatus(status)`로 별도 1회 조회
+    
+    ```java
+  	//EmployeeQueryRepositoryImp
+	  @Override
+	  public List<Tuple> countEmployeesGroupByPosition(EmployeeStatus status) {
+	    QEmployee employee = QEmployee.employee;
+	    return queryFactory
+	        .select(employee.position, employee.count())
+	        .from(employee)
+	        .where(employee.status.eq(status))
+	        .groupBy(employee.position)
+	        .orderBy(employee.count().desc())
+	        .fetch();
+	  }
+
+	   @Override
+	   public Long countEmployeesByStatus(EmployeeStatus status) {
+	    QEmployee employee = QEmployee.employee;
+	    return queryFactory
+	        .select(employee.count())
+	        .from(employee)
+	        .where(employee.status.eq(status))
+	        .fetchOne();
+	  }
+
+  ```
+
+
+**📍 Result**
+
+* 쿼리 호출 수 1회로 단축
+* 응답 속도 개선
+* 부서와 직함의 개수가 늘어나도 성능 안정적 유지
+
 <br>
 
 ---
