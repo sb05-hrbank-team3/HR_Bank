@@ -33,3 +33,7 @@ hrbank:
     type: local
     local:
       root-path: /storage
+  cors:
+    allowed-origins:
+      - http://localhost:8080    # Swagger UI 로컬
+      - https://hr-bank-service-production.up.railway.app/ # 실제 배포 도메인

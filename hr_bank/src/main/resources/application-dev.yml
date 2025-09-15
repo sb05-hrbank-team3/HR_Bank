@@ -24,3 +24,6 @@ hrbank:
     type: local
     local:
       root-path: ./storage
+  cors:
+    allowed-origins:
+      - http://localhost:8080
