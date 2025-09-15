@@ -17,45 +17,74 @@
 
 <br>
 
-## 🧑🏻‍💻 팀원 구성
-<div align="center">
+<h2>👩🏻‍💻 팀원 구성</h2>
 
-| 이름  | 역할          | 설명                                             | GitHub 주소                              |
-| --- | ----------- | ---------------------------------------------- | -------------------------------------- |
-| 남현수 | (팀장) 백엔드 개발자     | 직원 관리 시스템 엔티티 설계 및 구현, CI/CD 파이프라인 구축, 환경변수 관리 | [GitHub](https://github.com/Namsoo315) |
-| 류승민 | 백엔드 개발자     | 부서 관리 및 데이터 백업 시스템 개발, Batch 처리 및 스케줄링 담당      | [GitHub](https://github.com/bustam00)  |
-| 박종현 | 백엔드 개발자     | 수정 로그 시스템 개발, ERD 설계 및 코드 리팩터링                 | [GitHub](https://github.com/yeahlimm)  |
-| 이예림 | 백엔드/프론트 개발자 | 프론트엔드와 수정 상세 내역 조회 기능 개발, PPT 및 작업 흐름도 제작      | [GitHub](https://github.com/Namsoo315) |
-| 민재영 | 백엔드/프론트 개발자 | 프론트엔드 및 데이터 백업 기능 개발, 파일 스토리지 설정 및 관리          | [GitHub](https://github.com/jymin0)    |
-
-</div>
+<table>
+  <tr>
+    <th>이름</th>
+    <th>역할</th>
+    <th>설명</th>
+    <th>GitHub 주소</th>
+  </tr>
+  <tr>
+    <td><b>남현수</b></td>
+    <td>(팀장) 백엔드 개발자</td>
+    <td>직원 관리 시스템 엔티티 설계 및 구현, CI/CD 파이프라인 구축, 환경변수 관리</td>
+    <td><a href="https://github.com/Namsoo315">GitHub</a></td>
+  </tr>
+  <tr>
+    <td><b>류승민</b></td>
+    <td>백엔드 개발자</td>
+    <td>부서 관리 및 데이터 백업 시스템 개발, Batch 처리 및 스케줄링 담당</td>
+    <td><a href="https://github.com/bust">GitHub</a></td>
+  </tr>
+  <tr>
+    <td><b>박종현</b></td>
+    <td>백엔드 개발자</td>
+    <td>수정 로그 시스템 개발, ERD 설계 및 코드 리팩터링</td>
+    <td><a href="https://github.com/jonghyun">GitHub</a></td>
+  </tr>
+  <tr>
+    <td><b>이예림</b></td>
+    <td>백엔드/프론트엔드 개발자</td>
+    <td>프론트엔드와 수정 상세 내역 조회 기능 개발, PPT 및 작업 흐름도 제작</td>
+    <td><a href="https://github.com/yeahlimm">GitHub</a></td>
+  </tr>
+  <tr>
+    <td><b>민재영</b></td>
+    <td>백엔드/프론트엔드 개발자</td>
+    <td>프론트엔드 및 데이터 백업 기능 개발, 파일 스토리지 설정 및 관리</td>
+    <td><a href="https://github.com/minjaeyoung">GitHub</a></td>
+  </tr>
+</table>
 
 
 <br>
 
-## 🔧 기술 스택
+## 🛠 기술 스택
 
-#### Frontend
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+### 🎨 Frontend
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) 
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black) 
 
-#### Backend  
-![Spring Boot](https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+### ⚙️ Backend
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
 ![MapStruct](https://img.shields.io/badge/MapStruct-000000?style=for-the-badge&logo=mapstruct&logoColor=white)
-![Spring Data JPA](https://img.shields.io/badge/JPA-59666C?style=for-the-badge&logo=hibernate&logoColor=white)
+![JPA](https://img.shields.io/badge/JPA-59666C?style=for-the-badge&logo=hibernate&logoColor=white)
 
-#### Database  
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
-![H2](https://img.shields.io/badge/H2-004088?style=for-the-badge&logo=h2&logoColor=white)
+### 🗄 Database
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white) 
+![H2](https://img.shields.io/badge/H2-003B57?style=for-the-badge&logo=h2&logoColor=white)
 
-#### CI/CD  
-![Railway](https://img.shields.io/badge/Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white)
+### 🚀 CI/CD
+![Railway](https://img.shields.io/badge/Railway-000000?style=for-the-badge&logo=railway&logoColor=white)
 
-#### 협업 Tool  
-![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
-![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
-![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white)
+### 🤝 협업 Tool
+![Git](https://img.shields.io/badge/Git-F05033?style=for-the-badge&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white) 
+![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white) 
 ![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)
+
 
 <br>
 
