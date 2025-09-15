@@ -4,6 +4,8 @@ import static com.codeit.hrbank.entity.QEmployee.employee;
 
 import com.codeit.hrbank.entity.Employee;
 import com.codeit.hrbank.entity.EmployeeStatus;
+import com.codeit.hrbank.entity.QBinaryContent;
+import com.codeit.hrbank.entity.QDepartment;
 import com.codeit.hrbank.entity.QEmployee;
 import com.codeit.hrbank.repository.EmployeeQueryRepository;
 import com.querydsl.core.BooleanBuilder;
@@ -23,6 +25,9 @@ import org.springframework.stereotype.Repository;
 public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
 
   private final JPAQueryFactory queryFactory;
+  private static final QEmployee employee = QEmployee.employee;
+  private static final QDepartment department = QDepartment.department;
+  private static final QBinaryContent binaryContent = QBinaryContent.binaryContent;
 
   @Override
   public List<Employee> findAllQEmployeesPart(
@@ -34,6 +39,7 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
       LocalDate hireDateTo,
       EmployeeStatus status,
       Long idAfter,
+      String cursor,
       Integer size,
       String sortField,
       String sortDirection
@@ -62,8 +68,10 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
     if (status != null) {
       where.and(employee.status.eq(status));
     }
-    if (idAfter != null) {
-      where.and(employee.id.gt(idAfter));
+    if (cursor != null && idAfter != null) {
+      where.and(employee.name.gt(cursor)
+          .or(employee.name.eq(cursor).and(employee.id.gt(idAfter)))
+      );
     }
 
     // 정렬
@@ -77,6 +85,8 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
     };
 
     return queryFactory.selectFrom(employee)
+        .leftJoin(employee.department, department).fetchJoin()
+        .leftJoin(employee.binaryContent, binaryContent).fetchJoin()
         .where(where)
         .orderBy(order)
         .limit(size)

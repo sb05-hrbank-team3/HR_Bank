@@ -44,7 +44,7 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
   public Long putFile(Long binaryContentId, byte[] bytes, String fileName) {
     Path filePath = resolvePath(binaryContentId, fileName);
     if (Files.exists(filePath)) {
-      throw new IllegalArgumentException("key가" + binaryContentId + "인 파일이 이미 존재합니다.");
+      throw new IllegalArgumentException("파일이 이미 존재합니다.");
     }
     try (OutputStream outputStream = Files.newOutputStream(filePath)) {
       outputStream.write(bytes);
@@ -58,7 +58,7 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
   public InputStream getFile(Long binaryContentId) {
     Path filePath = findFileById(binaryContentId);
     if (filePath == null || Files.notExists(filePath)) {
-      throw new NoSuchElementException("key가" + binaryContentId + "인 파일이 존재하지 않습니다.");
+      throw new NoSuchElementException("파일을 찾을 수 없습니다.");
     }
     try {
       return Files.newInputStream(filePath);
@@ -81,7 +81,7 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
           .findFirst()
           .orElse(null);
     } catch (IOException e) {
-      throw new RuntimeException("key에 해당하는 파일 찾기 실패: " + key, e);
+      throw new RuntimeException("파일을 찾을 수 없습니다.");
     }
   }
 
@@ -107,7 +107,7 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
         throw new RuntimeException(e);
       }
     } else {
-      throw new NoSuchElementException("key가" + id + "인 파일이 존재하지 않습니다.");
+      throw new NoSuchElementException("파일을 찾을 수 없습니다.");
     }
   }
 }

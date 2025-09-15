@@ -29,6 +29,7 @@ public interface EmployeeService {
         LocalDate hireDateTo,
         EmployeeStatus status,
         Long idAfter,
+        String cursor,
         Integer size,
         String sortField,
         String sortDirection

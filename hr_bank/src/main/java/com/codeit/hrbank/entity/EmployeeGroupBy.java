@@ -8,7 +8,7 @@ public enum EmployeeGroupBy {
     return switch(s.toLowerCase()){
       case "department" -> DEPARTMENT;
       case "position" -> POSITION;
-      default -> throw new IllegalArgumentException("지원하지 않는 groupBy: " + s);
+      default -> throw new IllegalArgumentException("지원하지 않는 groupBy 값입니다.");
     };
   }
 }

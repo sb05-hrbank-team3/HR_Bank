@@ -9,10 +9,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
+    private final HrBankProperties hrBankProperties;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")           // 모든 경로에 대해
-                .allowedOriginPatterns("*")
+                .allowedOriginPatterns(hrBankProperties.getCors().getAllowedOrigins().toArray(new String[0]))
                 .allowedMethods("GET", "POST", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")         // 모든 요청 헤더 허용
                 .allowCredentials(true)      // 인증정보 포함

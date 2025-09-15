@@ -85,6 +85,7 @@ CREATE TABLE backups
             ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+
 --batch용
 -- ===============================
 -- Create Spring Batch tables (PostgreSQL, Spring Batch 5.x)
@@ -189,6 +190,9 @@ CREATE TABLE BATCH_JOB_EXECUTION_CONTEXT (
 -- DROP SEQUENCE IF EXISTS batch_job_instance_seq;
 -- DROP SEQUENCE IF EXISTS batch_job_execution_seq;
 -- DROP SEQUENCE IF EXISTS batch_step_execution_seq;
+
+
+CREATE INDEX idx_employee_name_id ON employees(name ASC, id ASC);
 
 
 -- -- -- 하위 테이블부터 삭제
