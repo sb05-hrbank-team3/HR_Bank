@@ -177,52 +177,5 @@ CREATE TABLE BATCH_JOB_EXECUTION_CONTEXT (
                                                  REFERENCES BATCH_JOB_EXECUTION(JOB_EXECUTION_ID)
 );
 
--- ===============================
--- Drop existing Spring Batch tables and sequences
--- ===============================
--- DROP TABLE IF EXISTS batch_job_execution_context CASCADE;
--- DROP TABLE IF EXISTS batch_step_execution_context CASCADE;
--- DROP TABLE IF EXISTS batch_step_execution CASCADE;
--- DROP TABLE IF EXISTS batch_job_execution_params CASCADE;
--- DROP TABLE IF EXISTS batch_job_execution CASCADE;
--- DROP TABLE IF EXISTS batch_job_instance CASCADE;
---
--- DROP SEQUENCE IF EXISTS batch_job_instance_seq;
--- DROP SEQUENCE IF EXISTS batch_job_execution_seq;
--- DROP SEQUENCE IF EXISTS batch_step_execution_seq;
-
-
 CREATE INDEX idx_employee_name_id ON employees(name ASC, id ASC);
-
-
--- -- -- 하위 테이블부터 삭제
--- DROP TABLE IF EXISTS histories CASCADE;
--- DROP TABLE IF EXISTS change_logs CASCADE;
--- DROP TABLE IF EXISTS backups CASCADE;
--- DROP TABLE IF EXISTS employees CASCADE;
--- DROP TABLE IF EXISTS binary_contents CASCADE;
--- DROP TABLE IF EXISTS departments CASCADE;
---
---
--- -- 전체 데이터 삭제
--- TRUNCATE TABLE histories CASCADE;
--- TRUNCATE TABLE change_logs CASCADE;
--- TRUNCATE TABLE backups CASCADE;
--- TRUNCATE TABLE employees CASCADE;
--- TRUNCATE TABLE binary_contents CASCADE;
--- TRUNCATE TABLE departments CASCADE;
---
--- CREATE USER hrbank_user WITH PASSWORD 'hrbank_1234';
--- GRANT ALL PRIVILEGES ON DATABASE hrbank TO hrbank_user;
--- -- ROLE이 모든 테이블/시퀀스 권한 가짐
--- GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO hrbank_role;
--- GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO hrbank_role;
---
--- -- 앞으로 생성될 테이블/시퀀스도 자동 권한 부여
--- ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO hrbank_role;
--- ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO hrbank_role;
---
--- GRANT ALL PRIVILEGES ON SCHEMA public TO hrbank_user;
---
--- GRANT hrbank_role TO hrbank_user;
 
