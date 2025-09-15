@@ -197,13 +197,14 @@
 ```
 
 ### - 시스템 아키텍처
+<img width="1050" height="725" alt="Image" src="https://github.com/user-attachments/assets/ff1723d8-233e-4ac8-ae09-f949a013ff11" />
 
 <br>
 
 ## 📎 팀원별 구현 기능 상세
 
 ## 🙎🏻‍♂️ 남현수
-### ✔️ 직원 수정
+### - 직원 수정
 	
 **📍 Situation** 
 - 운영자가 직원 정보를 변경할 수 있어야 함  
@@ -244,7 +245,7 @@ List<History> histories = ChangeLogUtils.createHistoriesForUpdate(
 - 변경 내역이 History 테이블에 기록되어 사후 감사 가능.
 <br>
 
-### ✔️ 직원 삭제
+### - 직원 삭제
 
 **📍 Situation** 
 
@@ -289,7 +290,7 @@ historyRepository.saveAll(histories);
 <br>
 
 ## 🙎🏻‍♂️ 류승민
-### ✔️ 부서 관리
+### - 부서 관리
 
 	
 **📍 Situation** 
@@ -300,8 +301,6 @@ historyRepository.saveAll(histories);
 - 목록 조회는 선택으로 조건을 받기 때문에 JpaRepository로는 한계가 있음
   
 **📍 Action** 
-<details>
-  <summary>파일구조 보기</summary>
 
 ```java
 DepartmentService에서 소속된 직원이 있는지 확인
@@ -364,9 +363,8 @@ if (sortField.equals("establishedDate") && sortDirection.equals("desc")) {
 }
 
 ```
-</details>
 
-**📍 Resultn** 
+**📍 Result** 
 
 - 불필요한 조건 제거 → 실행 쿼리 단순화.
 - 참조 무결성 유지
@@ -374,7 +372,7 @@ if (sortField.equals("establishedDate") && sortDirection.equals("desc")) {
 <br>
 
 ## 🙎🏻‍♂️ 민재영
-### ✔️ 대용량 다운로드 스트리밍 (메모리 OOM 방지)
+### - 대용량 다운로드 스트리밍 (메모리 OOM 방지)
 	
 **📍 Situation** 
 
@@ -436,7 +434,7 @@ if (sortField.equals("establishedDate") && sortDirection.equals("desc")) {
 <br>
 
 ## 🙎🏻‍♂️ 박종현
-### ✔️ 페이지네이션 구현 (ChangeLog)
+### - 페이지네이션 구현 (ChangeLog)
 	
 **📍 Situation**
 
@@ -490,7 +488,7 @@ public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
 <br>
 
 ## 🙍🏻‍♀️ 이예림
-### ✔️ 기간 단위별 직원 수 집계
+### - 기간 단위별 직원 수 집계
 
 	
 **📍 Situation**
@@ -519,6 +517,7 @@ public CursorPageResponse<ChangeLogDTO> searchChangeLogs(
 </details>
 <br>
 
+---
 
 ## 프로젝트 회고록
 (제작한 발표자료 링크 혹은 첨부파일)
