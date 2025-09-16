@@ -24,9 +24,11 @@ import com.codeit.hrbank.util.ChangeLogUtils;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -208,35 +210,16 @@ public class EmployeeServiceImpl implements EmployeeService {
       EmployeeStatus status, Long idAfter, String cursor, Integer size, String sortField,
       String sortDirection) {
 
-    List<Employee> employees = employeeRepository.findAllQEmployeesPart(
+    CursorPageResponse<Employee> result = employeeRepository.findAllQEmployeesPart(
         nameOrEmail, employeeNumber, departmentName, position,
         hireDateFrom, hireDateTo, status, idAfter, cursor, size, sortField, sortDirection
     );
 
-    boolean hasNext = employees.size() > size;
-    if (hasNext) {
-      employees = employees.subList(0, size);
-    }
+    List<EmployeeDTO> employeeDTOs = result.content().stream()
+        .map(employeeMapper::toDTO).collect(
+            Collectors.toList());
 
-    List<EmployeeDTO> employeeDTOs = employees.stream()
-        .map(employeeMapper::toDTO)
-        .toList();
-
-    Long nextIdAfter = null;
-    String nextCursor = null;
-    if (!employees.isEmpty()) {
-      Employee lastEmployee = employees.get(employees.size() - 1);
-      nextIdAfter = lastEmployee.getId();
-
-      nextCursor = switch (sortField) {
-        case "name" -> lastEmployee.getName();
-        case "email" -> lastEmployee.getEmail();
-        case "employeeNumber" -> lastEmployee.getEmployeeNumber();
-        default -> String.valueOf(lastEmployee.getId());
-      };
-    }
-
-    return pageResponseMapper.fromCursor(employeeDTOs, size, nextCursor, nextIdAfter, hasNext);
+    return pageResponseMapper.fromCursor(employeeDTOs, result.totalElements(), result.nextCursor(), result.nextIdAfter(), result.hasNext());
   }
 
   @Override

@@ -18,14 +18,14 @@ public interface PageResponseMapper {
             .build();
     }
 
-    default <T> CursorPageResponse<T> fromCursor(List<T> content, int size, String nextCursor, Long nextIdAfter,boolean hasNext) {
+    default <T> CursorPageResponse<T> fromCursor(List<T> content, long size, Object nextCursor, Long nextIdAfter,boolean hasNext) {
         return CursorPageResponse.<T>builder()
             .content(content)
             .nextCursor(nextCursor)
-            .size(size)
+            .size(content.size())
             .nextIdAfter(nextIdAfter)
             .hasNext(hasNext)
-            .totalElements(content.size())
+            .totalElements(size)
             .build();
     }
 }
