@@ -102,7 +102,7 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
         .leftJoin(employee.binaryContent, binaryContent).fetchJoin()
         .where(where)
         .orderBy(order)
-        .limit(size)
+        .limit(size + 1)
         .fetch();
 
 
