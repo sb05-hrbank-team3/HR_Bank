@@ -114,6 +114,8 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
 
     if (!content.isEmpty()) {
       Employee last = content.get(content.size() - 1);
+      System.out.println(last.getId());
+      System.out.println(content.size());
       nextIdAfter  = last.getId();
       nextCursor = switch (sortField) {
         case "name" -> last.getName();
@@ -126,7 +128,7 @@ public class EmployeeQueryRepositoryImpl implements EmployeeQueryRepository {
     long totalElements = countByConditions(nameOrEmail, employeeNumber, departmentName, position, hireDateFrom, hireDateTo, status);
 
     return CursorPageResponse.<Employee>builder()
-        .content(result)
+        .content(content)
         .nextCursor(nextCursor)
         .nextIdAfter(nextIdAfter)
         .hasNext(hasNext)
